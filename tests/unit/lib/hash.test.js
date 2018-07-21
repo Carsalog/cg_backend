@@ -11,4 +11,10 @@ describe("hash module", () => {
     const result = await bcrypt.compare(password, hashed);
     expect(result).toBe(true);
   });
+
+  it("should return true when password is valid", async () => {
+    const hashed = await bcrypt.hash(password, await bcrypt.genSalt(config.get("bcrypt.hashRounds")));
+    const result = await verify(password, hashed);
+    expect(result).toBe(true); ``
+  });
 });
