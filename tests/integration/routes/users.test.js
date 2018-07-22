@@ -104,6 +104,11 @@ describe("/api/users", () => {
   describe("POST /", () => {
 
     beforeEach(async (done) => {
+      /**
+       * Before each test define a user object and url string
+       *
+       * @type {{firstName: string, lastName: string, email: string, phone: string, password: string}}
+       */
       _usr = {
         firstName: "John",
         lastName: "Doe",
@@ -116,11 +121,19 @@ describe("/api/users", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove all user objects
+       */
       await User.remove({});
       done();
     });
 
     const prepare = () => {
+      /**
+       * Prepares request POST and return promise
+       *
+       * @return Promise:
+       */
       return request(server)
         .post(url)
         .set("x-auth-token", token)
