@@ -106,3 +106,16 @@ async function create(user) {
 
   return await newUser.save();
 }
+
+async function update(_id, user) {
+
+  let _user = await User.findById(_id);
+
+  if (!_user) return null;
+
+  _user.firstName = user.firstName;
+  _user.lastName = user.lastName;
+  _user.phone = user.phone;
+  _user.password = await hash(user.password);
+  return await _user.save();
+}
