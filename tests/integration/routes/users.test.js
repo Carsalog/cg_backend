@@ -372,4 +372,69 @@ describe("/api/users", () => {
       done();
     });
   });
+
+  describe("DELETE /:id", () => {
+
+    beforeEach(async (done) => {
+      usr = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@gmail.com",
+        phone: "12345678",
+        password: "12345678Ab"
+      };
+      user = await createUser();
+      token = await user.generateAuthToken();
+      url = `/api/users/${user._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.remove({});
+      done();
+    });
+
+    const prepare = () => {
+      return request(server).delete(url).set("x-auth-token", token);
+    };
+
+    it("should return status code 401 if user does not logged in", async (done) => {
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if given id is invalid", async (done) => {
+      url = "/api/users/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if given a user id does not exist", async (done) => {
+
+      url = `/api/users/${mongoose.Types.ObjectId().toHexString()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 if a user id is valid and exists", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+
+      done();
+    });
+  });
 });
