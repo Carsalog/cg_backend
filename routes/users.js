@@ -39,4 +39,22 @@ router.post("/", async (req, res) => {
   return res.status(201).send(_.pick(await create(req.body), config.get("users.returns")));
 });
 
+router.put("/:id", auth, async (req, res) => {
+
+  // Make sure that password is a valid format
+  if (!req.body.password || typeof req.body.password !== "string") {
+    return res.status(400).send({error: "Invalid password"})
+  }
+
+  // Make sure  that data is valid
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  const user = await update(req.params.id, req.body);
+
+  if (!user) return res.status(404).send({error: "Cannot find this user"});
+
+  return res.send(_.pick(user, config.get("users.returns")));
+});
+
 module.exports = router;
