@@ -40,6 +40,12 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", auth, async (req, res) => {
+  /**
+   * Update user info if user is logged and send valid data and
+   * send updated user object to a client
+   *
+   * @return Object:
+   */
 
   // Make sure that password is a valid format
   if (!req.body.password || typeof req.body.password !== "string") {
