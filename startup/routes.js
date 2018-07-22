@@ -1,5 +1,6 @@
 const express = require("express");
 const error = require("../middleware/error");
+const users = require("../routes/users");
 const home = require("../routes/home");
 
 
@@ -15,6 +16,7 @@ module.exports = function (app) {
   app.use(express.static('public'));
 
   // Routs
+  app.use('/api/users', users);
   app.use('/', home);
   app.use(error);
 };
