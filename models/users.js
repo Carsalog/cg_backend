@@ -132,3 +132,8 @@ async function remove(objectId) {
    */
   return await User.findByIdAndRemove(objectId);
 }
+
+async function getById(id) {
+
+  return await User.findById(id).select("-password -__v");
+}
