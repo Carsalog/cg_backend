@@ -57,7 +57,12 @@ userSchema.methods.generateAuthToken = function () {
 const User = mongoose.model(String(config.get("users.tableName")), userSchema);
 
 function validateUser(user) {
-
+  /**
+   * Validate user data from a client
+   *
+   * @type {{firstName: *, lastName: *, email: *, phone: *, password: *, su: *}}
+   * @return Object:
+   */
   const schema = {
     firstName: Joi.string().min(config.get("users.firstName.min"))
       .max(config.get("users.firstName.max")).required(),
