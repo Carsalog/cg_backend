@@ -8,6 +8,11 @@ const idValidator = require("../middleware/idValidator");
 
 
 router.get("/me", auth, async (req, res) => {
+  /**
+   * Returns user info to a client if auth token is valid
+   *
+   * @return Object:
+   */
   return res.send(await getById(req.user._id));
 });
 
