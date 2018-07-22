@@ -228,4 +228,135 @@ describe("/api/users", () => {
       done();
     });
   });
+
+  describe("PUT /:id", () => {
+
+    beforeEach(async (done) => {
+      usr = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@gmail.com",
+        phone: "12345678",
+        password: "12345678Ab",
+      };
+      _usr = {
+        firstName: "Max",
+        lastName: "Mad",
+        email: "john.doe@gmail.com",
+        phone: "02374023740",
+        password: "SuperPassword1",
+      };
+
+      user = await createUser();
+      token = await user.generateAuthToken();
+      url = `/api/users/${user._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.remove({});
+      done();
+    });
+
+    const prepare = () => {
+      return request(server)
+        .put(url)
+        .set("x-auth-token", token)
+        .send(_usr);
+    };
+
+    it("should return 400 if user email is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.email = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user first name is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.firstName = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user last name is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.lastName = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user phone is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.phone = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user password is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.password = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if server does not get any data", async (done) => {
+
+      _usr = {};
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return 404 if user does not exist", async (done) => {
+
+      url = `/api/users/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return 200 if user data is valid", async (done) => {
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("firstName", _usr.firstName);
+      expect(res.body).toHaveProperty("lastName", _usr.lastName);
+      expect(res.body).toHaveProperty("email", _usr.email);
+      expect(res.body).toHaveProperty("phone", _usr.phone);
+      expect(res.body).toHaveProperty("su", false);
+      done();
+    });
+  });
 });
