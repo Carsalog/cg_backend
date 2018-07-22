@@ -63,4 +63,14 @@ router.put("/:id", auth, async (req, res) => {
   return res.send(_.pick(user, config.get("users.returns")));
 });
 
+router.delete("/:id", [auth, idValidator], async (req, res) => {
+
+  // Try to find the car model
+  const user = await remove(req.params.id);
+  if (!user) return res.status(404).send({error: "Cannot find the user"});
+
+  // Return response
+  return res.send({info: `Dear ${user.firstName} ${user.lastName}, your profile was removed successfully`});
+});
+
 module.exports = router;
