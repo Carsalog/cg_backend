@@ -64,6 +64,12 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 router.delete("/:id", [auth, idValidator], async (req, res) => {
+  /**
+   * Removes a user profile. If given user id exists returns info message,
+   * else returns error message.
+   *
+   * @return Object:
+   */
 
   // Try to find the car model
   const user = await remove(req.params.id);
