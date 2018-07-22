@@ -48,4 +48,49 @@ describe("/api/users", () => {
     done();
   });
 
+  describe("GET /me", () => {
+
+    beforeEach(async (done) => {
+      usr = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@gmail.com",
+        phone: "12345678",
+        password: "12345678Ab"
+      };
+      user = await createUser();
+      token = await user.generateAuthToken();
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.remove({});
+      done();
+    });
+
+    it("should return status code 401 if user is note logged in", async (done) => {
+
+      const res = await request(server).get("/api/users/me");
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return user object", async (done) => {
+
+      const res = await request(server).get("/api/users/me").set("x-auth-token", token);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body.firstName).toBe(usr.firstName);
+      expect(res.body.lastName).toBe(usr.lastName);
+      expect(res.body.email).toBe(usr.email);
+      expect(res.body.phone).toBe(usr.phone);
+      expect(res.body.su).toBe(false);
+
+      done();
+    });
+  });
 });
