@@ -108,7 +108,11 @@ async function create(user) {
 }
 
 async function update(_id, user) {
-
+  /**
+   * Update user if user existing else return null
+   *
+   * @return Promise;
+   */
   let _user = await User.findById(_id);
 
   if (!_user) return null;
