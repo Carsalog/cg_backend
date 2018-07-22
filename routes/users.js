@@ -17,6 +17,11 @@ router.get("/me", auth, async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  /**
+   * Create a new user and send user object to the client
+   *
+   * @return object:
+   */
 
   // Make sure that password is a valid format
   if (!req.body.password || typeof req.body.password !== "string") {
