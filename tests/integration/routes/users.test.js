@@ -16,6 +16,11 @@ describe("/api/users", () => {
   const dataTypes = [0, 1, false, null, undefined, ""];
 
   const createUser = async function () {
+    /**
+     * Create a user in db and return promise
+     *
+     * @return Promise:
+     */
     const _user = User({
       firstName: usr.firstName,
       lastName: usr.lastName,
@@ -36,6 +41,5 @@ describe("/api/users", () => {
     await server.close();
     done();
   });
-
 
 });
