@@ -78,3 +78,8 @@ function validateUser(user) {
 
   return Joi.validate(user, schema);
 }
+
+async function getByEmail(email) {
+
+  return await User.findOne({email: email});
+}
