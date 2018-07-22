@@ -52,3 +52,6 @@ userSchema.methods.generateAuthToken = function () {
    */
   return jwt.sign(_.pick(this, config.get("users.returns")), config.get("jwtPrivateKey"));
 };
+
+// Create user model
+const User = mongoose.model(String(config.get("users.tableName")), userSchema);
