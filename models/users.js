@@ -89,7 +89,12 @@ async function getByEmail(email) {
 }
 
 async function create(user) {
-
+  /**
+   * Create a new user
+   *
+   * @type {Model}
+   * @return Promise:
+   */
   const newUser = new User({
     firstName: user.firstName,
     lastName: user.lastName,
