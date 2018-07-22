@@ -141,3 +141,11 @@ async function getById(id) {
    */
   return await User.findById(id).select("-password -__v");
 }
+
+exports.User = User;
+exports.validate = validateUser;
+exports.getByEmail = getByEmail;
+exports.create = create;
+exports.getById = getById;
+exports.update = update;
+exports.remove = remove;
