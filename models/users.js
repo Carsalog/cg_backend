@@ -125,6 +125,10 @@ async function update(_id, user) {
 }
 
 async function remove(objectId) {
-
+  /**
+   * Remove a user profile
+   *
+   * @return Promise:
+   */
   return await User.findByIdAndRemove(objectId);
 }
