@@ -100,4 +100,119 @@ describe("/api/users", () => {
       done();
     });
   });
+
+  describe("POST /", () => {
+
+    beforeEach(async (done) => {
+      _usr = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@gmail.com",
+        phone: "12345678",
+        password: "12345678Ab"
+      };
+      url = "/api/users";
+      done();
+    });
+
+    afterEach(async (done) => {
+      await User.remove({});
+      done();
+    });
+
+    const prepare = () => {
+      return request(server)
+        .post(url)
+        .set("x-auth-token", token)
+        .send(_usr);
+    };
+
+    it("should return 400 if user email is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.email = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user first name is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.firstName = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user last name is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.lastName = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user phone is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.phone = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return 400 if user password is invalid", async (done) => {
+
+      for (let i = 0; i < dataTypes.length; i++) {
+        _usr.password = dataTypes[i];
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+
+      done();
+    });
+
+    it("should return status code 400 if user email already registered", async (done) => {
+      await prepare();
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 201 if user data is valid", async (done) => {
+      const res = await prepare();
+
+      expect(res.status).toBe(201);
+      done();
+    });
+
+    it("should return user object if user data is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.body.firstName).toBe(usr.firstName);
+      expect(res.body.lastName).toBe(usr.lastName);
+      expect(res.body.email).toBe(usr.email);
+      expect(res.body.phone).toBe(usr.phone);
+      expect(res.body.su).toBe(false);
+      done();
+    });
+  });
 });
