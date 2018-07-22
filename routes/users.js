@@ -7,6 +7,8 @@ const auth = require("../middleware/authentication");
 const idValidator = require("../middleware/idValidator");
 
 
-
+router.get("/me", auth, async (req, res) => {
+  return res.send(await getById(req.user._id));
+});
 
 module.exports = router;
