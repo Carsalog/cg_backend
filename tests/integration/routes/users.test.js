@@ -51,6 +51,10 @@ describe("/api/users", () => {
   describe("GET /me", () => {
 
     beforeEach(async (done) => {
+      /**
+       * Before each test create a new user, and generate a new auth token
+       * @type {{firstName: string, lastName: string, email: string, phone: string, password: string}}
+       */
       usr = {
         firstName: "John",
         lastName: "Doe",
@@ -64,6 +68,9 @@ describe("/api/users", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove all user objects
+       */
       await User.remove({});
       done();
     });
