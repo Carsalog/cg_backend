@@ -33,6 +33,9 @@ describe("/api/users", () => {
   };
 
   beforeEach(async (done) => {
+    /**
+     * Before each test group, run server
+     */
     server = require("../../../index");
     done();
   });
