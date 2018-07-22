@@ -41,6 +41,9 @@ describe("/api/users", () => {
   });
 
   afterEach(async (done) => {
+    /**
+     * After each test group shut down the server
+     */
     await server.close();
     done();
   });
