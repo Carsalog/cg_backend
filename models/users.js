@@ -87,3 +87,17 @@ async function getByEmail(email) {
    */
   return await User.findOne({email: email});
 }
+
+async function create(user) {
+
+  const newUser = new User({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+    password: await hash(user.password),
+    su: false
+  });
+
+  return await newUser.save();
+}
