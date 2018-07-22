@@ -80,6 +80,10 @@ function validateUser(user) {
 }
 
 async function getByEmail(email) {
-
+  /**
+   * Get user by email
+   *
+   * @return Promise:
+   */
   return await User.findOne({email: email});
 }
