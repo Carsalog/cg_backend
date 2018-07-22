@@ -123,3 +123,8 @@ async function update(_id, user) {
   _user.password = await hash(user.password);
   return await _user.save();
 }
+
+async function remove(objectId) {
+
+  return await User.findByIdAndRemove(objectId);
+}
