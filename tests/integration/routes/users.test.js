@@ -376,6 +376,10 @@ describe("/api/users", () => {
   describe("DELETE /:id", () => {
 
     beforeEach(async (done) => {
+      /**
+       * Before each test: define a user object and url, create a user in db, generate auth token
+       * @type {{firstName: string, lastName: string, email: string, phone: string, password: string}}
+       */
       usr = {
         firstName: "John",
         lastName: "Doe",
@@ -390,11 +394,19 @@ describe("/api/users", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove user objects
+       */
       await User.remove({});
       done();
     });
 
     const prepare = () => {
+      /**
+       * Prepares a request and returns promise
+       *
+       * @return Promise:
+       */
       return request(server).delete(url).set("x-auth-token", token);
     };
 
