@@ -232,6 +232,11 @@ describe("/api/users", () => {
   describe("PUT /:id", () => {
 
     beforeEach(async (done) => {
+      /**
+       * Before each test: define two users objects and url string,
+       * create a user in db, generate auth token
+       * @type {{firstName: string, lastName: string, email: string, phone: string, password: string}}
+       */
       usr = {
         firstName: "John",
         lastName: "Doe",
@@ -254,11 +259,19 @@ describe("/api/users", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove all user objects
+       */
       await User.remove({});
       done();
     });
 
     const prepare = () => {
+      /**
+       * Prepares put request and return promise
+       *
+       * @return Promise:
+       */
       return request(server)
         .put(url)
         .set("x-auth-token", token)
