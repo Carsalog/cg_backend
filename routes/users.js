@@ -16,4 +16,22 @@ router.get("/me", auth, async (req, res) => {
   return res.send(await getById(req.user._id));
 });
 
+router.post("/", async (req, res) => {
+
+  // Make sure that password is a valid format
+  if (!req.body.password || typeof req.body.password !== "string") {
+    return res.status(400).send({error: "Invalid password"})
+  }
+
+  // Make sure  that data is valid
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  // Make sure that user with given email is not already registered
+  if (await getByEmail(req.body.email)) return res.status(400).send({error: "User already registered"});
+
+  // Return user object to a client
+  return res.status(201).send(_.pick(await create(req.body), config.get("users.returns")));
+});
+
 module.exports = router;
