@@ -3,11 +3,11 @@ const {User} = require("../../../models/users");
 const bcrypt = require("bcrypt");
 const config = require("config");
 const mongoose = require("mongoose");
+const server = require("../../../loader");
 
 
 describe("/api/users", () => {
 
-  let server;
   let token;
   let user;
   let usr;
@@ -32,22 +32,6 @@ describe("/api/users", () => {
     return await _user.save();
   };
 
-  beforeEach(async (done) => {
-    /**
-     * Before each test group, run server
-     */
-    server = require("../../../index");
-    done();
-  });
-
-  afterEach(async (done) => {
-    /**
-     * After each test group shut down the server
-     */
-    await server.close();
-    done();
-  });
-
   describe("GET /me", () => {
 
     beforeEach(async (done) => {
@@ -58,7 +42,7 @@ describe("/api/users", () => {
       usr = {
         firstName: "John",
         lastName: "Doe",
-        email: "john.doe@gmail.com",
+        email: "john.doe@user.test",
         phone: "12345678",
         password: "12345678Ab"
       };
@@ -71,7 +55,7 @@ describe("/api/users", () => {
       /**
        * After each test remove all user objects
        */
-      await User.remove({});
+      await user.remove();
       done();
     });
 
@@ -112,7 +96,7 @@ describe("/api/users", () => {
       _usr = {
         firstName: "John",
         lastName: "Doe",
-        email: "john.doe@gmail.com",
+        email: "john.doe@user.test",
         phone: "12345678",
         password: "12345678Ab"
       };
@@ -124,7 +108,7 @@ describe("/api/users", () => {
       /**
        * After each test remove all user objects
        */
-      await User.remove({});
+      await User.findOne({email: "john.doe@user.test"}).remove();
       done();
     });
 
@@ -262,7 +246,7 @@ describe("/api/users", () => {
       /**
        * After each test remove all user objects
        */
-      await User.remove({});
+      await user.remove();
       done();
     });
 
@@ -397,7 +381,7 @@ describe("/api/users", () => {
       /**
        * After each test remove user objects
        */
-      await User.remove({});
+      await user.remove();
       done();
     });
 
