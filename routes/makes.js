@@ -8,4 +8,9 @@ const idValidator = require("../middleware/idValidator");
 const _ = require("lodash");
 
 
+router.get("/", validator, async (req, res) => {
+
+  res.send(await getByPage(req.params.page, req.params.amount));
+});
+
 module.exports = router;
