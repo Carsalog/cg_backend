@@ -13,4 +13,19 @@ router.get("*", (req, res) => {
   return res.status(404).send({error: "Cannot find this page"})
 });
 
+router.post("*", (req, res) => {
+
+  return res.status(404).send({error: "Cannot create anything with given url"})
+});
+
+router.put("*", (req, res) => {
+
+  return res.status(404).send({error: "Cannot update anything with given url"})
+});
+
+router.delete("*", (req, res) => {
+
+  return res.status(404).send({error: "Cannot delete anything with given url"})
+});
+
 module.exports = router;
