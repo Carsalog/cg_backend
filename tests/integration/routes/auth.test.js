@@ -12,5 +12,17 @@ describe("/api/auth", () => {
   let credentials;
   const dataTypes = [0, false, null, undefined, ""];
 
-  
+  const createUser = async function () {
+
+    const _user = new User({
+      firstName: usr.firstName,
+      lastName: usr.lastName,
+      email: usr.email,
+      phone: usr.phone,
+      password: await bcrypt.hash(usr.password, await bcrypt.genSalt(config.get("bcrypt.hashRounds"))),
+      su: false
+    });
+    return _user.save();
+  };
+
 });
