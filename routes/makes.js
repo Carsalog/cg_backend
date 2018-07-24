@@ -9,7 +9,10 @@ const _ = require("lodash");
 
 
 router.get("/", validator, async (req, res) => {
-
+  /**
+   * Get amount of car makes by page
+   * @return Object:
+   */
   res.send(await getByPage(req.params.page, req.params.amount));
 });
 
