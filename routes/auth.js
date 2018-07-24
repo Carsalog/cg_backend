@@ -6,6 +6,11 @@ const router = express.Router();
 
 
 router.post("/", async (req, res) => {
+  /**
+   * Create a new user and send user object to the client
+   *
+   * @return Object:
+   */
 
   // Make sure  that data is valid
   const { error } = validate(req.body);
