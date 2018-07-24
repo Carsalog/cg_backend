@@ -14,17 +14,23 @@ router.get("*", (req, res) => {
 });
 
 router.post("*", (req, res) => {
-
+  /**
+   * Returns error message with status code 404 if POST method with given url is undefined
+   */
   return res.status(404).send({error: "Cannot create anything with given url"})
 });
 
 router.put("*", (req, res) => {
-
+  /**
+   * Returns error message with status code 404 if PUT method with given url is undefined
+   */
   return res.status(404).send({error: "Cannot update anything with given url"})
 });
 
 router.delete("*", (req, res) => {
-
+  /**
+   * Returns error message with status code 404 if DELETE method with given url is undefined
+   */
   return res.status(404).send({error: "Cannot delete anything with given url"})
 });
 
