@@ -30,4 +30,17 @@ describe("/api/auth", () => {
     return _user.save();
   };
 
+  beforeEach(async (done) => {
+
+    usr = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@auth.test",
+      phone: "12345678",
+      password: "12345678Ab",
+    };
+    user = await createUser();
+    credentials = {email: "john.doe@auth.test", password: "12345678Ab"};
+    done();
+  });
 });
