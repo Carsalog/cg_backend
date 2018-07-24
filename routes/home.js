@@ -34,4 +34,9 @@ router.delete("*", (req, res) => {
   return res.status(404).send({error: "Cannot delete anything with given url"})
 });
 
+router.all("*", (req, res) => {
+
+  return res.status(400).send({error: `Server doesn't support ${req.method} queries`})
+});
+
 module.exports = router;
