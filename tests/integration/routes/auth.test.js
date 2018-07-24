@@ -31,7 +31,10 @@ describe("/api/auth", () => {
   };
 
   beforeEach(async (done) => {
-
+    /**
+     * Before each test define user object and user credentials, create user
+     * @type {{firstName: string, lastName: string, email: string, phone: string, password: string}}
+     */
     usr = {
       firstName: "John",
       lastName: "Doe",
