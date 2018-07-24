@@ -13,7 +13,12 @@ describe("/api/auth", () => {
   const dataTypes = [0, false, null, undefined, ""];
 
   const createUser = async function () {
-
+    /**
+     * Create a new user object and return promise
+     *
+     * @type {User}
+     * @return Promise:
+     */
     const _user = new User({
       firstName: usr.firstName,
       lastName: usr.lastName,
