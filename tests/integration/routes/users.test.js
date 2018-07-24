@@ -185,9 +185,8 @@ describe("/api/users", () => {
     });
 
     it("should return status code 400 if user email already registered", async (done) => {
-      await prepare();
+      user = await createUser();
       const res = await prepare();
-
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty("error");
       done();
@@ -271,6 +270,15 @@ describe("/api/users", () => {
         expect(res.body).toHaveProperty("error");
       }
 
+      done();
+    });
+
+    it("should return status code 400 if token is invalid", async (done) => {
+
+      const res = await request(server).put(url).set("x-auth-token", "badToken").send(_usr);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
       done();
     });
 
