@@ -3,6 +3,7 @@ const {getByEmail} = require("../models/users");
 const {verify} = require("../lib/hash");
 const express = require("express");
 const router = express.Router();
+const config = require("config");
 
 
 router.post("/", async (req, res) => {
@@ -28,5 +29,14 @@ router.post("/", async (req, res) => {
   // Return user object to a client
   return res.send({token: token});
 });
+
+function validate(req) {
+
+  const schema = {
+    email: Joi.string().min(6).max(256).required().email(),
+    password:  new Joi.password(config.get("users.password"))
+  };
+  return Joi.validate(req, schema);
+}
 
 module.exports = router;
