@@ -19,7 +19,11 @@ describe("/api/makes", () => {
   let url;
 
   const createUser = async function () {
-
+    /**
+     * Creates user and returns a promise
+     * @type {User}
+     * @return Promise:
+     */
     const _user = new User({
       firstName: usr.firstName,
       lastName: usr.lastName,
@@ -32,7 +36,10 @@ describe("/api/makes", () => {
   };
 
   beforeEach(async (done) => {
-
+    /**
+     * Before each test defines user object creates user, and generate auth token
+     * @type {{firstName: string, lastName: string, email: string, phone: string, password: string}}
+     */
     usr = {
       firstName: "John",
       lastName: "Doe",
@@ -47,7 +54,9 @@ describe("/api/makes", () => {
   });
 
   afterEach(async (done) => {
-
+    /**
+     * After each test remove user
+     */
     await user.remove();
     await done();
   });
