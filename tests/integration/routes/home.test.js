@@ -27,4 +27,38 @@ describe("Undefined routes or base html", () => {
       done();
     });
   });
+
+  describe("POST /*", () => {
+
+    it("should return 404 if send POST query on undefined route", async (done) => {
+      const res = await request(server).post(url);
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+  });
+
+  describe("PUT /*", () => {
+
+    it("should return 404 if send PUT query on undefined route", async (done) => {
+      const res = await request(server).put(url);
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+  });
+
+  describe("DELETE /*", () => {
+
+    it("should return 404 if send DELETE query on undefined route", async (done) => {
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+  });
+
 });
