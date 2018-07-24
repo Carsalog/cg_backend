@@ -35,7 +35,9 @@ router.delete("*", (req, res) => {
 });
 
 router.all("*", (req, res) => {
-
+  /**
+   * Returns error message with status code 400 if server doesn't support query method
+   */
   return res.status(400).send({error: `Server doesn't support ${req.method} queries`})
 });
 
