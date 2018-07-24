@@ -13,6 +13,11 @@ router.post("/", async (req, res) => {
    * @return Object:
    */
 
+  // Make sure that password is a valid format
+  if (!req.body.password || typeof req.body.password !== "string") {
+    return res.status(400).send({error: "Invalid password"})
+  }
+
   // Make sure  that data is valid
   const { error } = validate(req.body);
   if (error) return res.status(400).send({error: error.details[0].message});
