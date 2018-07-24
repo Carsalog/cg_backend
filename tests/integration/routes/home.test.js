@@ -61,4 +61,14 @@ describe("Undefined routes or base html", () => {
     });
   });
 
+  describe("* /*", () => {
+
+    it("should return 400 if server doesn't support current query method", async (done) => {
+      const res = await request(server).patch(url);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+  });
 });
