@@ -46,4 +46,10 @@ describe("/api/auth", () => {
     credentials = {email: "john.doe@auth.test", password: "12345678Ab"};
     done();
   });
+
+  afterEach(async (done) => {
+
+    await user.remove();
+    done();
+  });
 });
