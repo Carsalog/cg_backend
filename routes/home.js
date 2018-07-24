@@ -7,7 +7,10 @@ router.get("/", (req, res) => {
 });
 
 router.get("*", (req, res) => {
-  return res.status(404).send({error: "Page note found"})
+  /**
+   * Returns error message with status code 404 if GET method with given url is undefined
+   */
+  return res.status(404).send({error: "Cannot find this page"})
 });
 
 module.exports = router;
