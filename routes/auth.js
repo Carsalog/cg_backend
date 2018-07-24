@@ -31,7 +31,11 @@ router.post("/", async (req, res) => {
 });
 
 function validate(req) {
-
+  /**
+   * Validates client credentials if credentials is invalid returns error
+   * @type {{email: *, password: *}}
+   * @return Object:
+   */
   const schema = {
     email: Joi.string().min(6).max(256).required().email(),
     password:  new Joi.password(config.get("users.password"))
