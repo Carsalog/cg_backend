@@ -84,3 +84,12 @@ function validate(object) {
   };
   return Joi.validate(object, schema);
 }
+
+exports.Make = Make;
+exports.validate = validate;
+exports.getById = getById;
+exports.getByPage = getByPage;
+exports.create = create;
+exports.update = update;
+exports.remove = remove;
+exports.getByName = getByName;
