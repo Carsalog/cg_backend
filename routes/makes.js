@@ -58,4 +58,13 @@ router.delete("/:id", [auth, su, idValidator], async (req, res) => {
   return res.send({info: `Make ${item.name} was removed`});
 });
 
+router.get("/:id", idValidator, async (req, res) => {
+
+  const item = await getById(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find the make"});
+
+  // Send response to a client
+  return res.send(item);
+});
+
 module.exports = router;
