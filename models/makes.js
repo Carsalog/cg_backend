@@ -15,3 +15,8 @@ const makeSchema = new mongoose.Schema({
 
 // Create Make model
 const Make = mongoose.model(String(config.get("makes.tableName")), makeSchema);
+
+async function getById(itemId) {
+
+  return await Make.findById(itemId).select("-__v");
+}
