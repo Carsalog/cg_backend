@@ -23,3 +23,10 @@ async function getById(itemId) {
    */
   return await Make.findById(itemId).select("-__v");
 }
+
+async function getByPage(page, amount) {
+
+  return await Make.find()
+    .skip((page - 1) * amount).limit(amount).sort({name: 1})
+    .select("-__v");
+}
