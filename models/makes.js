@@ -49,3 +49,14 @@ async function getByName(name) {
    */
   return await Make.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
 }
+
+async function update(obj, _id) {
+
+  // Try to get a car type
+  const current = await Make.findById(_id);
+  if (!current) return null;
+
+  // Update and return a car type
+  current.name = obj.name;
+  return await current.save();
+}
