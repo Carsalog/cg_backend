@@ -352,4 +352,54 @@ describe("/api/makes", () => {
       done();
     });
   });
+
+  describe("DELETE /:id", () => {
+
+    const prepare = () => {
+      return request(server).delete(url).set("x-auth-token", token);
+    };
+
+    beforeEach(async (done) => {
+      name = "Dodge";
+      make = Make({name});
+      await make.save();
+      url = `/api/makes/${make._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await make.remove();
+      done();
+    });
+
+    it("should return status code 404 if make id is invalid", async (done) => {
+      url = "/api/makes/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if make id is valid but not exist", async (done) => {
+
+      url = `/api/makes/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and info message if make id exists", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+
+      done();
+    });
+  });
 });
