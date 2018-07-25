@@ -33,4 +33,11 @@ router.post("/", [auth, su], async (req, res) => {
   return res.status(201).send(_.pick(await create(req.body), ["_id", "name"]));
 });
 
+router.put('/:id', [auth, su, idValidator], async (req, res) => {
+
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  return res.send(_.pick(await update(req.body, req.params.id), ["_id", "name"]));
+});
 module.exports = router;
