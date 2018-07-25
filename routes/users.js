@@ -5,6 +5,8 @@ const router = express.Router();
 const config = require("config");
 const auth = require("../middleware/authentication");
 const idValidator = require("../middleware/idValidator");
+const pwValidator = require("../middleware/pwValidator");
+const valid = require("../middleware/valid");
 
 
 router.get("/me", auth, async (req, res) => {
@@ -16,21 +18,12 @@ router.get("/me", auth, async (req, res) => {
   return res.send(await getById(req.user._id));
 });
 
-router.post("/", async (req, res) => {
+router.post("/", [pwValidator, valid(validate)], async (req, res) => {
   /**
    * Create a new user and send user object to the client
    *
    * @return object:
    */
-
-  // Make sure that password is a valid format
-  if (!req.body.password || typeof req.body.password !== "string") {
-    return res.status(400).send({error: "Invalid password"})
-  }
-
-  // Make sure  that data is valid
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send({error: error.details[0].message});
 
   // Make sure that user with given email is not already registered
   if (await getByEmail(req.body.email)) return res.status(400).send({error: "User already registered"});
@@ -39,22 +32,13 @@ router.post("/", async (req, res) => {
   return res.status(201).send(_.pick(await create(req.body), config.get("users.returns")));
 });
 
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", [pwValidator, valid(validate)], auth, async (req, res) => {
   /**
    * Update user info if user is logged and send valid data and
    * send updated user object to a client
    *
    * @return Object:
    */
-
-  // Make sure that password is a valid format
-  if (!req.body.password || typeof req.body.password !== "string") {
-    return res.status(400).send({error: "Invalid password"})
-  }
-
-  // Make sure  that data is valid
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send({error: error.details[0].message});
 
   const user = await update(req.params.id, req.body);
 

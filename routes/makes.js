@@ -6,6 +6,7 @@ const su = require("../middleware/admin");
 const validator = require("../middleware/validator");
 const idValidator = require("../middleware/idValidator");
 const _ = require("lodash");
+const valid = require("../middleware/valid");
 
 
 router.get("/", validator, async (req, res) => {
@@ -16,15 +17,11 @@ router.get("/", validator, async (req, res) => {
   res.send(await getByPage(req.params.page, req.params.amount));
 });
 
-router.post("/", [auth, su], async (req, res) => {
+router.post("/", [auth, su, valid(validate)], async (req, res) => {
   /**
    * Create a new car make
    * @return Object:
    */
-
-  // validate request
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send({error: error.details[0].message});
 
   const item = await getByName(req.body.name);
   if (item) return res.status(200).send(item);
@@ -33,13 +30,11 @@ router.post("/", [auth, su], async (req, res) => {
   return res.status(201).send(_.pick(await create(req.body), ["_id", "name"]));
 });
 
-router.put('/:id', [auth, su, idValidator], async (req, res) => {
+router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) => {
   /**
    * Update a car make
    * @return Object:
    */
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send({error: error.details[0].message});
 
   return res.send(_.pick(await update(req.body, req.params.id), ["_id", "name"]));
 });

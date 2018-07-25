@@ -4,23 +4,16 @@ const {verify} = require("../lib/hash");
 const express = require("express");
 const router = express.Router();
 const config = require("config");
+const pwValidator = require("../middleware/pwValidator");
+const valid = require("../middleware/valid");
 
 
-router.post("/", async (req, res) => {
+router.post("/", [pwValidator, valid(validate)], async (req, res) => {
   /**
    * Create a new user and send user object to the client
    *
    * @return Object:
    */
-
-  // Make sure that password is a valid format
-  if (!req.body.password || typeof req.body.password !== "string") {
-    return res.status(400).send({error: "Invalid password"})
-  }
-
-  // Make sure  that data is valid
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send({error: error.details[0].message});
 
   const user = await getByEmail(req.body.email);
   const msg = {error: "Invalid email or password"};
@@ -42,7 +35,7 @@ function validate(req) {
    * @return Object:
    */
   const schema = {
-    email: Joi.string().min(6).max(256).required().email(),
+    email: Joi.string().email().min(6).max(256).required().email(),
     password:  new Joi.password(config.get("users.password"))
   };
   return Joi.validate(req, schema);
