@@ -17,6 +17,10 @@ router.get("/", validator, async (req, res) => {
 });
 
 router.post("/", [auth, su], async (req, res) => {
+  /**
+   * Create a new car make
+   * @return Object:
+   */
 
   // validate request
   const { error } = validate(req.body);
