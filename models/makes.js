@@ -64,3 +64,8 @@ async function update(obj, _id) {
   current.name = obj.name;
   return await current.save();
 }
+
+async function remove(objectId) {
+
+  return await Make.findByIdAndRemove(objectId);
+}
