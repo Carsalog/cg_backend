@@ -16,4 +16,17 @@ router.get("/", validator, async (req, res) => {
   res.send(await getByPage(req.params.page, req.params.amount));
 });
 
+router.post("/", [auth, su], async (req, res) => {
+
+  // validate request
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  const item = await getByName(req.body.name);
+  if (item) return res.status(200).send(item);
+
+  // Send response to a client
+  return res.status(201).send(_.pick(await create(req.body), ["_id", "name"]));
+});
+
 module.exports = router;
