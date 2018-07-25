@@ -12,3 +12,6 @@ const makeSchema = new mongoose.Schema({
     trim: true
   }
 });
+
+// Create Make model
+const Make = mongoose.model(String(config.get("makes.tableName")), makeSchema);
