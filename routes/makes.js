@@ -59,7 +59,10 @@ router.delete("/:id", [auth, su, idValidator], async (req, res) => {
 });
 
 router.get("/:id", idValidator, async (req, res) => {
-
+  /**
+   * Get make by id and send it to a client
+   * @return Object:
+   */
   const item = await getById(req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find the make"});
 
