@@ -72,3 +72,12 @@ async function remove(objectId) {
    */
   return await Make.findByIdAndRemove(objectId);
 }
+
+function validate(object) {
+
+  const schema = {
+    _id: Joi.objectId(),
+    name: Joi.string().min(config.get("makes.name.min")).max(config.get("makes.name.max")).required()
+  };
+  return Joi.validate(object, schema);
+}
