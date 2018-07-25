@@ -33,3 +33,9 @@ async function getByPage(page, amount) {
     .skip((page - 1) * amount).limit(amount).sort({name: 1})
     .select("-__v");
 }
+
+async function create(name) {
+
+  const type = new Make(name);
+  return await type.save();
+}
