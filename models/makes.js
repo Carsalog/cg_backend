@@ -17,6 +17,9 @@ const makeSchema = new mongoose.Schema({
 const Make = mongoose.model(String(config.get("makes.tableName")), makeSchema);
 
 async function getById(itemId) {
-
+  /**
+   * Returns a car make by id
+   * @return Promise:
+   */
   return await Make.findById(itemId).select("-__v");
 }
