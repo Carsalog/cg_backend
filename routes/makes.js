@@ -34,7 +34,10 @@ router.post("/", [auth, su], async (req, res) => {
 });
 
 router.put('/:id', [auth, su, idValidator], async (req, res) => {
-
+  /**
+   * Update a car make
+   * @return Object:
+   */
   const { error } = validate(req.body);
   if (error) return res.status(400).send({error: error.details[0].message});
 
