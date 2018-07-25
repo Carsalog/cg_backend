@@ -51,6 +51,10 @@ async function getByName(name) {
 }
 
 async function update(obj, _id) {
+  /**
+   * Update a car model
+   * @return Promise:
+   */
 
   // Try to get a car type
   const current = await Make.findById(_id);
