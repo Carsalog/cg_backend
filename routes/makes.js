@@ -45,6 +45,10 @@ router.put('/:id', [auth, su, idValidator], async (req, res) => {
 });
 
 router.delete("/:id", [auth, su, idValidator], async (req, res) => {
+  /**
+   * Remove a car make
+   * @return Object:
+   */
 
   // Try to find the car make
   const item = await remove(req.params.id);
