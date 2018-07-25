@@ -44,6 +44,8 @@ async function create(name) {
 }
 
 async function getByName(name) {
-
+  /**
+   * Return car type or none
+   */
   return await Make.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
 }
