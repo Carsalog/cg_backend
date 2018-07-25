@@ -91,4 +91,38 @@ describe("/api/makes", () => {
       expect(res.body.length).toBe(2);
     });
   });
+
+  describe("GET /:id", () => {
+
+    beforeEach(async (done) => {
+      name = "Hyundai";
+      make = Make({name});
+      await make.save();
+      done();
+    });
+
+    afterEach(async (done) => {
+      await make.remove();
+      done();
+    });
+
+    it("should return status code 404 if make does not exist", async (done) => {
+
+      const res = await request(server).get(`/api/makes/${mongoose.Types.ObjectId().toHexString()}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and name of the make", async (done) => {
+
+      const res = await request(server).get(`/api/makes/${make._id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", make.name);
+      done();
+    });
+  });
 });
