@@ -25,7 +25,10 @@ async function getById(itemId) {
 }
 
 async function getByPage(page, amount) {
-
+  /**
+   * Get list of makes by page/amount (pagination)
+   * @return Promise:
+   */
   return await Make.find()
     .skip((page - 1) * amount).limit(amount).sort({name: 1})
     .select("-__v");
