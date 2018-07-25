@@ -35,7 +35,10 @@ async function getByPage(page, amount) {
 }
 
 async function create(name) {
-
+  /**
+   * Create a new make of cars
+   * @return Promise:
+   */
   const type = new Make(name);
   return await type.save();
 }
