@@ -125,4 +125,124 @@ describe("/api/makes", () => {
       done();
     });
   });
+
+  describe("POST /", () => {
+
+    const prepare = () => {
+      return request(server)
+        .post("/api/makes")
+        .set("x-auth-token", token)
+        .send({name});
+    };
+
+    beforeEach(async (done) => {
+
+      done();
+    });
+
+    afterEach(async (done) => {
+      await Make.remove({name});
+      done();
+    });
+
+    it("should return status code 400 if server does not get any data", async (done) => {
+
+      const res = await request(server).post("/api/makes").set("x-auth-token", token);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if make name is null", async (done) => {
+      name = null;
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if make name is undefined", async (done) => {
+
+      name = undefined;
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if make name is false", async (done) => {
+
+      name = false;
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if make name is an empty string", async (done) => {
+
+      name = "";
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it(`should return status code 400 if make name length is less than ${config.get("makes.name.min")} characters`, async (done) => {
+
+      name = Array(config.get("makes.name.min")).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it(`should return 400 if make name length is more than ${config.get("makes.name.max")} characters`, async (done) => {
+
+      name = Array(config.get("makes.name.max") + 2).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and make object if make already exists", async (done) => {
+
+      name = "Dodge";
+      await prepare();
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+
+      done();
+    });
+
+    it("should return status code 201 if make is valid", async (done) => {
+
+      name = "Dodge";
+      const res = await prepare();
+
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+
+      done();
+    });
+  });
 });
