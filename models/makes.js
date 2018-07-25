@@ -66,6 +66,9 @@ async function update(obj, _id) {
 }
 
 async function remove(objectId) {
-
+  /**
+   * Remove a car type
+   * @return Promise:
+   */
   return await Make.findByIdAndRemove(objectId);
 }
