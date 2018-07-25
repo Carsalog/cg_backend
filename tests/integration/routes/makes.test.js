@@ -60,4 +60,35 @@ describe("/api/makes", () => {
     await user.remove();
     await done();
   });
+
+  describe("GET /", () => {
+
+    beforeEach(async (done) => {
+      makes = [
+        {name: "BMW"},
+        {name: "Toyota"},
+        {name: "Mitsubishi"}
+      ];
+      await Make.collection.insertMany(makes);
+      done();
+    });
+
+    afterEach(async () => {
+      await Make.deleteMany({name: {$in: ["BMW", "Toyota", "Mitsubishi"]}});
+    });
+
+    it("should return status code 200 when GET parameters is not defined", async () => {
+      const res = await request(server).get("/api/makes");
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 3).toBeTruthy();
+    });
+
+    it("should return only 2 makes when GET parameter amount is 2", async () => {
+      const res = await request(server).get("/api/makes?page=1&amount=2");
+
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(2);
+    });
+  });
 });
