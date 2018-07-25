@@ -74,7 +74,10 @@ async function remove(objectId) {
 }
 
 function validate(object) {
-
+  /**
+   * Validate model fields
+   * @return object:
+   */
   const schema = {
     _id: Joi.objectId(),
     name: Joi.string().min(config.get("makes.name.min")).max(config.get("makes.name.max")).required()
