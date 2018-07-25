@@ -43,4 +43,15 @@ router.put('/:id', [auth, su, idValidator], async (req, res) => {
 
   return res.send(_.pick(await update(req.body, req.params.id), ["_id", "name"]));
 });
+
+router.delete("/:id", [auth, su, idValidator], async (req, res) => {
+
+  // Try to find the car make
+  const item = await remove(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this make"});
+
+  // Send response to a client
+  return res.send({info: `Make ${item.name} was removed`});
+});
+
 module.exports = router;
