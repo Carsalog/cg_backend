@@ -42,3 +42,8 @@ async function create(name) {
   const type = new Make(name);
   return await type.save();
 }
+
+async function getByName(name) {
+
+  return await Make.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
+}
