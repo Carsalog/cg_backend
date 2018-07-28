@@ -13,65 +13,63 @@ const makeSchema = new mongoose.Schema({
   }
 });
 
-// Create Make model
-const Make = mongoose.model(String(config.get("makes.tableName")), makeSchema);
-
-async function getById(itemId) {
+makeSchema.statics.getById = function (_id) {
   /**
    * Returns a car make by id
    * @return Promise:
    */
-  return await Make.findById(itemId).select("-__v");
-}
+  return this.findById(_id).select("-__v");
+};
 
-async function getByPage(page, amount) {
+makeSchema.statics.getByPage = function(page, amount) {
   /**
    * Get list of makes by page/amount (pagination)
    * @return Promise:
    */
-  return await Make.find()
-    .skip((page - 1) * amount).limit(amount).sort({name: 1})
-    .select("-__v");
-}
+  return this.find().skip((page - 1) * amount).limit(amount).sort({name: 1}).select("-__v");
+};
 
-async function create(name) {
+makeSchema.statics.getByName = function (name) {
+  /**
+   * Return car type or none
+   */
+  return this.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
+};
+
+makeSchema.statics.create = function (name) {
   /**
    * Create a new make of cars
    * @return Promise:
    */
-  const type = new Make(name);
-  return await type.save();
-}
+  return this(name).save();
+};
 
-async function getByName(name) {
-  /**
-   * Return car type or none
-   */
-  return await Make.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
-}
-
-async function update(obj, _id) {
+makeSchema.statics.update = async function (obj, _id) {
   /**
    * Update a car model
    * @return Promise:
    */
 
   // Try to get a car type
-  const current = await Make.findById(_id);
+  const current = await this.findById(_id);
   if (!current) return null;
 
   // Update and return a car type
   current.name = obj.name;
-  return await current.save();
-}
+  return current.save();
+};
 
-async function remove(objectId) {
+makeSchema.statics.delete = function (_id) {
   /**
    * Remove a car type
    * @return Promise:
    */
-  return await Make.findByIdAndRemove(objectId);
-}
+  return this.findByIdAndRemove(_id);
+};
+
+// Create Make model
+const Make = mongoose.model(String(config.get("makes.tableName")), makeSchema);
+
 
 function validate(object) {
   /**
@@ -87,9 +85,3 @@ function validate(object) {
 
 exports.Make = Make;
 exports.validate = validate;
-exports.getById = getById;
-exports.getByPage = getByPage;
-exports.create = create;
-exports.update = update;
-exports.remove = remove;
-exports.getByName = getByName;
