@@ -136,7 +136,7 @@ describe("/api/makes", () => {
     };
 
     beforeEach(async (done) => {
-
+      name = "Make";
       done();
     });
 
@@ -222,8 +222,7 @@ describe("/api/makes", () => {
 
     it("should return status code 200 and make object if make already exists", async (done) => {
 
-      name = "Dodge";
-      await prepare();
+      await Make({name}).save();
       const res = await prepare();
 
       expect(res.status).toBe(200);
@@ -235,7 +234,6 @@ describe("/api/makes", () => {
 
     it("should return status code 201 if make is valid", async (done) => {
 
-      name = "Dodge";
       const res = await prepare();
 
       expect(res.status).toBe(201);
@@ -256,7 +254,7 @@ describe("/api/makes", () => {
     };
 
     beforeEach(async (done) => {
-
+      name = "new name";
       make = Make({name: "Dodge"});
       await make.save();
       url = `/api/makes/${make._id}`;
@@ -269,8 +267,18 @@ describe("/api/makes", () => {
     });
 
     it("should return status code 404 if make id is invalid", async (done) => {
-      name = "new Name";
+
       url = "/api/makes/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if make doesn't exist", async (done) => {
+
+      url = `/api/makes/${mongoose.Types.ObjectId().toHexString()}`;
       const res = await prepare();
 
       expect(res.status).toBe(404);
@@ -343,7 +351,7 @@ describe("/api/makes", () => {
     });
 
     it(`should return updated make object and status code 200 if make name is valid`, async (done) => {
-      name = "Honda";
+
       const res = await prepare();
 
       expect(res.status).toBe(200);
