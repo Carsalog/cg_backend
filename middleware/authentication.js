@@ -2,6 +2,10 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 module.exports = function (req, res, next) {
+  /**
+   * User authentication middleware. Read x-auth-token from headers, if token is doesn't set
+   * returns error 401, if in headers invalid token return error with status code 400
+   */
 
   // Retrieve auth token
   const token = req.header("x-auth-token");
