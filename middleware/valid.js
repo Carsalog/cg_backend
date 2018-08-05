@@ -1,4 +1,8 @@
 module.exports = (validator) => {
+  /**
+   * Joi validator middleware. Get validator function as parameter
+   * and return middleware function, which validate client date
+   */
 
   return (req, res, next) => {
     const { error } = validator(req.body);
