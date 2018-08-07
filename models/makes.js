@@ -63,6 +63,17 @@ makeSchema.statics.update = async function (obj, _id) {
   return current.save();
 };
 
+makeSchema.statics.addModel = async function (obj, _id) {
+
+  // Try to get a car type
+  const current = await this.findById(_id);
+  if (!current) return null;
+
+  // Update and return a car type
+  current.models.push(obj._id);
+  return current.save();
+};
+
 makeSchema.statics.delete = function (_id) {
   /**
    * Remove a car type
