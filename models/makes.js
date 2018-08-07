@@ -64,6 +64,10 @@ makeSchema.statics.update = async function (obj, _id) {
 };
 
 makeSchema.statics.addModel = async function (obj, _id) {
+  /**
+   * Update a make models
+   * @return Promise:
+   */
 
   // Try to get a car type
   const current = await this.findById(_id);
