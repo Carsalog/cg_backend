@@ -78,6 +78,18 @@ makeSchema.statics.addModel = async function (obj, _id) {
   return current.save();
 };
 
+makeSchema.removeModel = function(obj, _id) {
+
+  let make = this.findById(_id).then(data => make = data);
+
+  // Get index of a model
+  const index = make.models.indexOf(obj._id);
+
+  // If model in array remove it
+  if (index > -1) make.models.splice(index, 1);
+  return make.save();
+};
+
 makeSchema.statics.delete = function (_id) {
   /**
    * Remove a car type
