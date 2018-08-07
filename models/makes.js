@@ -10,7 +10,11 @@ const makeSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true
-  }
+  },
+  models: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: String(config.get("models.tableName"))
+  }],
 });
 
 makeSchema.statics.getById = function (_id) {
@@ -78,7 +82,8 @@ function validate(object) {
    */
   const schema = {
     _id: Joi.objectId(),
-    name: Joi.string().min(config.get("makes.name.min")).max(config.get("makes.name.max")).required()
+    name: Joi.string().min(config.get("makes.name.min")).max(config.get("makes.name.max")).required(),
+    models: Joi.array().items(Joi.string().min(config.get("makes.name.min")).max(config.get("makes.name.max")))
   };
   return Joi.validate(object, schema);
 }
