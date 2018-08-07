@@ -79,6 +79,10 @@ makeSchema.statics.addModel = async function (obj, _id) {
 };
 
 makeSchema.removeModel = function(obj, _id) {
+  /**
+   * Remove model from model list
+   * @type {Promise}
+   */
 
   let make = this.findById(_id).then(data => make = data);
 
