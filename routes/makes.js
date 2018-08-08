@@ -14,7 +14,7 @@ router.get("/", validator, async (req, res) => {
    * Get amount of car makes by page
    * @return Object:
    */
-  res.send(await Make.getByPage(req.params.page, req.params.amount));
+  res.send(await Make.getByPage(req.params.page, req.params.amount).populate("models", "name"));
 });
 
 router.post("/", [auth, su, valid(validate)], async (req, res) => {
