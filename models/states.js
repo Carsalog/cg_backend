@@ -28,26 +28,41 @@ const state = new mongoose.Schema({
 });
 
 state.statics.getById = function (_id) {
-
+  /**
+   * Returns a car make by id
+   * @return Promise:
+   */
   return this.findById(_id).populate("cities", "name").select("-__v");
 };
 
 state.statics.getByPage = function(page, amount) {
-
+  /**
+   * Get list of makes by page/amount (pagination)
+   * @return Promise:
+   */
   return this.find().skip((page - 1) * amount).limit(amount).sort({name: 1}).select("-__v");
 };
 
 state.statics.getByName = function (name) {
-
+  /**
+   * Return car type or none
+   */
   return this.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
 };
 
 state.statics.create = function (data) {
-
+  /**
+   * Create a new state
+   * @return Promise:
+   */
   return this(data).save();
 };
 
 state.statics.update = async function (obj, _id) {
+  /**
+   * Update a state
+   * @return Promise:
+   */
 
   // Try to get a car type
   const current = await this.findById(_id);
@@ -60,7 +75,10 @@ state.statics.update = async function (obj, _id) {
 };
 
 state.statics.delete = function (_id) {
-
+  /**
+   * Remove a state
+   * @return Promise:
+   */
   return this.findByIdAndRemove(_id);
 };
 
