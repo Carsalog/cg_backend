@@ -263,4 +263,155 @@ describe("/api/states", () => {
     });
   });
 
+  describe("PUT /:id", () => {
+    /**
+     * Test cases for PUT on /api/states/:id
+     */
+    const prepare = () => {
+      /**
+       * Return PUT request object
+       * @return Promise:
+       */
+      return request(server)
+        .put(url)
+        .set("x-auth-token", token)
+        .send({name: name, abbreviation: abbreviation});
+    };
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test:
+       *    define: name and abbreviation
+       *    create: a new state
+       *    generate: url
+       * @type {string}
+       */
+      name = "newname";
+      abbreviation = "NN";
+
+      state = await State({name: "state", abbreviation: "ST"}).save();
+
+      url = `/api/states/${state._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * After each request remove the state
+       */
+      await state.remove();
+      done();
+    });
+
+    it("should return status code 404 if state id is invalid", async (done) => {
+
+      url = "/api/states/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if state doesn't exist", async (done) => {
+
+      url = `/api/states/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if request has no data", async (done) => {
+
+      const res = await request(server).put(url).set("x-auth-token", token);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if state name is invalid", async (done) => {
+
+      dataTypes.forEach(async type => {
+
+        name = type;
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it("should return status code 400 if state abbreviation is invalid", async (done) => {
+
+      dataTypes.forEach(async type => {
+
+        abbreviation = type;
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it(`should return status code 400 if state name is less than ${config.get("states.name.min")} characters`,
+      async (done) => {
+
+        name = Array(config.get("states.name.min")).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+      });
+
+    it(`should return status code 400 if state name is more than ${config.get("states.name.max")} characters`,
+      async (done) => {
+
+        name = Array(config.get("states.name.max") + 2).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+      });
+
+    it(`should return status code 400 if state abbreviation is less than ${config.get("states.abbreviation.min")} characters`,
+      async (done) => {
+
+        abbreviation = Array(config.get("states.abbreviation.min")).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+      });
+
+    it(`should return status code 400 if state abbreviation is more than ${config.get("states.abbreviation.max")} characters`,
+      async (done) => {
+
+        abbreviation = Array(config.get("states.abbreviation.max") + 2).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+      });
+
+    it(`should return updated state object and status code 200 if state data is valid`, async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+      expect(res.body).toHaveProperty("abbreviation", abbreviation);
+      done();
+    });
+  });
+
 });
