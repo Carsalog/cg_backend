@@ -128,4 +128,139 @@ describe("/api/states", () => {
 
   });
 
+  describe("POST /", () => {
+    /**
+     * Test cases for POST on /api/states
+     */
+    const prepare = () => {
+      /**
+       * Create a POST request
+       * @return Promise:
+       */
+      return request(server)
+        .post("/api/states")
+        .set("x-auth-token", token)
+        .send({name: name, abbreviation: abbreviation});
+    };
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test define name and abbreviation
+       * @type {string}
+       */
+      name = "state";
+      abbreviation = "ST";
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * Remote the state
+       */
+      await State.remove({name});
+      done();
+    });
+
+    it("should return status code 400 if server does not get any data", async (done) => {
+
+      const res = await request(server).post("/api/states").set("x-auth-token", token);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if state name is invalid", async (done) => {
+
+      dataTypes.forEach(async type => {
+
+        name = type;
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it("should return status code 400 if state abbreviation is invalid", async (done) => {
+
+      dataTypes.forEach(async type => {
+
+        abbreviation = type;
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it(`should return 400 if state name length is less than ${config.get("states.name.min")} characters`, async (done) => {
+
+      name = Array(config.get("states.name.min")).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it(`should return 400 if state name length is more than ${config.get("states.name.max")} characters`, async (done) => {
+
+      name = Array(config.get("states.name.max") + 2).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it(`should return 400 if state abbreviation length is less than ${config.get("states.abbreviation.min")} characters`,
+      async (done) => {
+
+        abbreviation = Array(config.get("states.abbreviation.min")).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+      }
+    );
+
+    it(`should return 400 if state abbreviation length is more than ${config.get("states.abbreviation.max")} characters`,
+      async (done) => {
+
+        abbreviation = Array(config.get("states.abbreviation.max") + 2).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+      }
+    );
+
+    it("should return status code 200 and state object if state already exists", async (done) => {
+
+      await State({name: name, abbreviation: abbreviation}).save();
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+      expect(res.body).toHaveProperty("abbreviation", abbreviation);
+      done();
+    });
+
+    it("should return status code 201 if state is valid and it doesn't exist", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+      done();
+    });
+  });
+
 });
