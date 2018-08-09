@@ -83,4 +83,49 @@ describe("/api/states", () => {
     });
   });
 
+  describe("GET /:id", () => {
+    /**
+     * Test cases for GET on /api/states/:id
+     */
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test define name, create state
+       * @type {string}
+       */
+      name = "state";
+      state = await State({name: name, abbreviation: "ST"}).save();
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * After each test remove the state
+       */
+      await state.remove();
+      done();
+    });
+
+    it("should return status code 404 if state does not exist", async (done) => {
+
+      const res = await request(server).get(`/api/states/${mongoose.Types.ObjectId().toHexString()}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and state object if state exists", async (done) => {
+
+      const res = await request(server).get(`/api/states/${state._id}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", state.name);
+      expect(res.body).toHaveProperty("abbreviation", state.abbreviation);
+      done();
+    });
+
+  });
+
 });
