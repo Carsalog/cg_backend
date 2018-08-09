@@ -414,4 +414,72 @@ describe("/api/states", () => {
     });
   });
 
+  describe("DELETE /:id", () => {
+    /**
+     * Test cases for DELETE on /api/states/:id
+     */
+
+    const prepare = () => {
+      /**
+       * Return DELETE request object
+       * @return Promise:
+       */
+      return request(server).delete(url).set("x-auth-token", token);
+    };
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test:
+       *   define: name and abbreviation,
+       *   create: a new state
+       *   generate: url
+       * @type {string}
+       */
+      name = "state";
+      abbreviation = "ST";
+
+      state = await State({name, abbreviation}).save();
+
+      url = `/api/states/${state._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * After each test remove the state
+       */
+      await state.remove();
+      done();
+    });
+
+    it("should return status code 404 if state id is invalid", async (done) => {
+
+      url = "/api/states/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if state id is valid but not exist", async (done) => {
+
+      url = `/api/states/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and info message if state id exists", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+
+      done();
+    });
+  });
 });
