@@ -63,37 +63,6 @@ makeSchema.statics.update = async function (obj, _id) {
   return current.save();
 };
 
-makeSchema.statics.addModel = async function (obj, _id) {
-  /**
-   * Update a make models
-   * @return Promise:
-   */
-
-  // Try to get a car type
-  const current = await this.findById(_id);
-  if (!current) return null;
-
-  // Update and return a car type
-  current.models.push(obj._id);
-  return current.save();
-};
-
-makeSchema.removeModel = function(obj, _id) {
-  /**
-   * Remove model from model list
-   * @type {Promise}
-   */
-
-  let make = this.findById(_id).then(data => make = data);
-
-  // Get index of a model
-  const index = make.models.indexOf(obj._id);
-
-  // If model in array remove it
-  if (index > -1) make.models.splice(index, 1);
-  return make.save();
-};
-
 makeSchema.statics.delete = function (_id) {
   /**
    * Remove a car type
