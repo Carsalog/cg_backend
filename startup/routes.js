@@ -3,6 +3,7 @@ const error = require("../middleware/error");
 const auth = require("../routes/auth");
 const users = require("../routes/users");
 const home = require("../routes/home");
+const cors = require("cors");
 
 
 module.exports = function (app) {
@@ -12,9 +13,11 @@ module.exports = function (app) {
   app.set('views', './public');
 
   // Middleware
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({limit: '50mb'}));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
   app.use(express.static('public'));
+  app.use(cors());
+  app.disable('x-powered-by');
 
   // Routs
   app.use('/api/auth', auth);
