@@ -84,3 +84,13 @@ state.statics.delete = function (_id) {
 
 
 exports.State = mongoose.model(String(config.get("states.tableName")), state);
+exports.validate = function validate(object) {
+
+  return Joi.validate(object, {
+    _id: Joi.objectId(),
+    name: Joi.string().min(config.get("states.name.min")).max(config.get("states.name.max")).required(),
+    abbreviation: Joi.string().min(config.get("states.abbreviation.min")).max(config.get("states.abbreviation.max")).required(),
+    cities: Joi.array().items(Joi.objectId())
+  });
+};
+
