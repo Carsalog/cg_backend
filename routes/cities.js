@@ -83,4 +83,12 @@ router.delete("/:id", [auth, su, idValidator], async (req, res) => {
   return res.send({info: `City ${name} was removed`});
 });
 
+router.get("/:id", idValidator, async (req, res) => {
+
+  const item = await City.getById(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this city"});
+
+  return res.send(item);
+});
+
 module.exports = router;
