@@ -9,4 +9,12 @@ const _ = require("lodash");
 const valid = require("../middleware/valid");
 
 
+router.get("/by/state/:id", idValidator, async (req, res) => {
+
+  const state = await State.getById(req.params.id);
+  if (!state) return res.status(404).send({error: "Cannot find this state"});
+
+  return res.send(state.cities);
+});
+
 module.exports = router;
