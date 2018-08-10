@@ -39,4 +39,71 @@ describe("/api/cities", () => {
     await done();
   });
 
+  describe("GET /by/state/:id", () => {
+
+    let city1;
+    let city2;
+    const prepare = () => {
+
+      return request(server).get(url);
+    };
+
+    beforeEach(async (done) => {
+
+      state = await State({name: "state1", abbreviation: "ST"}).save();
+
+      city1 = await City({name: "city1", state: state._id}).save();
+      city2 = await City({name: "city2", state: state._id}).save();
+
+      state.cities.push(city1._id);
+      state.cities.push(city2._id);
+      await state.save();
+
+      url = `/api/cities/by/state/${state._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await city1.remove();
+      await city2.remove();
+      await state.remove();
+      done();
+    });
+
+    it("should return status code 404 if pass invalid state id", async (done) => {
+
+      url = `/api/cities/by/state/1`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if state id doesn't exist", async (done) => {
+
+      url = `/api/cities/by/state/${mongoose.Types.ObjectId().toHexString()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and list of models", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 2).toBeTruthy();
+
+      done();
+    });
+  });
+
 });
