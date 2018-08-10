@@ -19,26 +19,46 @@ const city = new mongoose.Schema({
 });
 
 city.statics.getById = function (_id) {
-
+  /**
+   * Returns a city by id
+   * @return Promise:
+   */
   return this.findById(_id).select("-__v");
 };
 
 city.statics.getByPage = function (page, amount) {
-
+  /**
+   * Returns amount of cities by page
+   *
+   * @return Promise:
+   */
   return this.find().skip((page - 1) * amount).limit(amount).sort({name: 1}).select("-__v");
 };
 
 city.statics.create = function (data) {
-
+  /**
+   * Create a new city
+   *
+   * @return Promise:
+   */
   return this({name: data.name, state: data.state}).save();
 };
 
 city.statics.getByName = function (name, _id) {
-
+  /**
+   * Returns city by name and state id
+   *
+   * @return Promise:
+   */
   return this.findOne({name: { "$regex": name, "$options": "i" }, state: _id}).select("-__v");
 };
 
 city.statics.update = async function (obj, _id) {
+  /**
+   * Update a city
+   *
+   * @return Promise:
+   */
 
   // Try to get a city
   const current = await this.findById(_id);
@@ -50,7 +70,10 @@ city.statics.update = async function (obj, _id) {
 };
 
 city.statics.deleteById = function(_id) {
-
+  /**
+   * Remove a city
+   * @return Promise:
+   */
   return this.findByIdAndRemove(_id);
 };
 
