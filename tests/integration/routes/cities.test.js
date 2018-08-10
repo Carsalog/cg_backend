@@ -192,4 +192,127 @@ describe("/api/cities", () => {
       done();
     });
   });
+
+  describe("POST /", () => {
+    /**
+     * Test cases for POST on /api/cities
+     */
+
+    const prepare = () => {
+      /**
+       * Prepares and returns POST request
+       * @return Promise:
+       */
+      return request(server).post(url).set("x-auth-token", token).send({name: name, state: state._id});
+    };
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test create state, and define name and url
+       */
+
+      state = await State({name: "state1", abbreviation: "ST"}).save();
+
+      name = "city";
+      url = "/api/cities";
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * After each test remove city and state
+       */
+
+      await City.remove({name});
+      await state.remove();
+      done();
+    });
+
+    it("should return status code 401 if user does not logged in", async (done) => {
+
+      const res = await request(server).post(url).send({name:name, state: state._id});
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if token is invalid", async (done) => {
+
+      const res = await request(server).post(url).set("x-auth-token", "badToken").send({name:name, state: state._id});
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if state id doesn't exist", async (done) => {
+
+      const  fakeId = mongoose.Types.ObjectId().toHexString();
+      const res = await request(server).post(url).set("x-auth-token", token).send({name:name, state: fakeId});
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if name is invalid", async (done) => {
+
+      dataTypes.forEach(async type => {
+
+        name = type;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it(`should return status code 400 if name less than ${config.get("cities.name.min")} characters`, async (done) => {
+
+      name = Array(config.get("cities.name.min")).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it(`should return status code 400 if name more than ${config.get("cities.name.max")} characters`, async (done) => {
+
+      name = Array(config.get("cities.name.max") + 2).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 if city already exists", async (done) => {
+
+      await City({name: name, state: state._id}).save();
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+      expect(res.body).toHaveProperty("state", String(state._id));
+      done();
+    });
+
+    it("should return status code 201 and the city object if name is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+      expect(res.body).toHaveProperty("state", String(state._id));
+      done();
+    });
+  });
+
 });
