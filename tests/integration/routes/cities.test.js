@@ -462,4 +462,115 @@ describe("/api/cities", () => {
     });
   });
 
+  describe("DELETE /:id", () => {
+    /**
+     * Test cases for DELETE on /api/cities/:id
+     */
+
+    const prepare = () => {
+      /**
+       * Prepares and returns DELETE request
+       * @return Promise:
+       */
+      return request(server).delete(url).set("x-auth-token", token)
+    };
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test:
+       *    define: name
+       *    create: state and city
+       *    add: city to the state
+       *    generate: url
+       * @type {string}
+       */
+
+      name = "city";
+
+      state = await State({name: "state1", abbreviation: "ST"}).save();
+      city = await City({name: name, state: state._id}).save();
+
+      state.cities.push(city._id);
+      await state.save();
+
+      url = `/api/cities/${city._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * After each test remove city and state
+       */
+
+      await city.remove();
+      await state.remove();
+      done();
+    });
+
+    it("should return status code 401 if user does not logged in", async (done) => {
+
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user is not admin", async (done) => {
+
+      user.su = false;
+      await user.save();
+
+      const __token = await user.generateAuthToken();
+
+      const res = await request(server).delete(url).set("x-auth-token", __token);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 404 if city id is invalid", async (done) => {
+
+      url = "/api/cities/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if city id does not exist", async (done) => {
+
+      url = `/api/cities/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and info message if city id is valid", async (done) => {
+
+      const cityId = String(city._id);
+      const stateId = String(city.state);
+
+      const res = await prepare();
+      state = await State.findById(stateId);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+
+      // Make sure that city was removed
+      expect(await City.findOne({name})).toBe(null);
+      expect(state.cities.indexOf(cityId)).toBe(-1);
+
+      done();
+    });
+  });
 });
