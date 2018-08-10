@@ -80,7 +80,10 @@ city.statics.deleteById = function(_id) {
 exports.City = mongoose.model(String(config.get("cities.tableName")), city);
 
 exports.validate = function (obj) {
-
+  /**
+   * Validate model fields
+   * @return object:
+   */
   return Joi.validate(obj, {
     _id: Joi.objectId(),
     name: Joi.string().min(config.get("cities.name.min")).max(config.get("cities.name.max")).required(),
