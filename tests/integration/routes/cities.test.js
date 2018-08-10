@@ -8,6 +8,9 @@ const utils = require("./utils");
 
 
 describe("/api/cities", () => {
+  /**
+   * Tests for /api/cities
+   */
 
   let user;
   let token;
@@ -18,6 +21,9 @@ describe("/api/cities", () => {
   const dataTypes = [0, null, false, undefined, ""];
 
   beforeEach(async (done) => {
+    /**
+     * Before each test create a user and generate a token
+     */
 
     user = await utils.createUser("john.doe@cities.test", true);
     token = await user.generateAuthToken();
@@ -25,6 +31,9 @@ describe("/api/cities", () => {
   });
 
   afterEach(async (done) => {
+    /**
+     * After each test remove the user
+     */
 
     await user.remove();
     await done();
