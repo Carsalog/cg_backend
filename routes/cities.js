@@ -84,6 +84,9 @@ router.delete("/:id", [auth, su, idValidator], async (req, res) => {
 });
 
 router.get("/:id", idValidator, async (req, res) => {
+  /**
+   * Get city by id
+   */
 
   const item = await City.getById(req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find this city"});
