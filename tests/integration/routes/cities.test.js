@@ -40,16 +40,27 @@ describe("/api/cities", () => {
   });
 
   describe("GET /by/state/:id", () => {
+    /**
+     * Test cases for GET on /api/cities/by/state/:id
+     */
 
     let city1;
     let city2;
     const prepare = () => {
-
+      /**
+       * Prepare and return GET request
+       * @return Promise:
+       */
       return request(server).get(url);
     };
 
     beforeEach(async (done) => {
-
+      /**
+       * Before each test:
+       *    create: state, and cities,
+       *    add: cities to state,
+       *    generate: url
+       */
       state = await State({name: "state1", abbreviation: "ST"}).save();
 
       city1 = await City({name: "city1", state: state._id}).save();
@@ -64,7 +75,9 @@ describe("/api/cities", () => {
     });
 
     afterEach(async (done) => {
-
+      /**
+       * After each test remove: state and cities
+       */
       await city1.remove();
       await city2.remove();
       await state.remove();
