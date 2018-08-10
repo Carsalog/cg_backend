@@ -315,4 +315,151 @@ describe("/api/cities", () => {
     });
   });
 
+  describe("PUT /:id", () => {
+    /**
+     * Test cases for PUT on /api/cities/:id
+     */
+
+    const prepare = () => {
+      /**
+       * Prepares and returns PUT request
+       * @return Promise:
+       */
+      return request(server).put(url).set("x-auth-token", token).send({name, state: state._id});
+    };
+
+    beforeEach(async (done) => {
+      /**
+       * Before each test:
+       *    define: name
+       *    create: state and city
+       *    add: city to the state
+       *    generate: url
+       * @type {string}
+       */
+      name = "new city";
+
+      state = await State({name: "state1", abbreviation: "ST"}).save();
+      city = await City({name: "model", state: state._id}).save();
+
+      state.cities.push(city._id);
+      await state.save();
+
+      url = `/api/cities/${city._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+      /**
+       * After each test remove city and state
+       */
+      await state.remove();
+      await city.remove();
+      done();
+    });
+
+    it("should return status code 401 if user does not logged in", async (done) => {
+
+      const res = await request(server).put(url).send({name, state: state._id});
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user is not admin", async (done) => {
+
+      user.su = false;
+      await user.save();
+
+      const __token = user.generateAuthToken();
+
+      const res = await request(server).put(url).set("x-auth-token", __token).send({name, state: state._id});
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      // Set user privileges
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 400 if name is invalid", async (done) => {
+
+      dataTypes.forEach(async type => {
+        name = type;
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if state id doesn't exist", async (done) => {
+
+      const  fakeId = mongoose.Types.ObjectId().toHexString();
+      const res = await request(server).put(url).set("x-auth-token", token).send({name:name, state: fakeId});
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it(`should return status code 400 if name less than ${config.get("cities.name.min")} characters`, async (done) => {
+
+      name = Array(config.get("cities.name.min")).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it(`should return status code 400 if name more than ${config.get("cities.name.max")} characters`, async (done) => {
+
+      name = Array(config.get("cities.name.max") + 2).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if city id is invalid", async (done) => {
+
+      url = "/api/cities/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if city id doesn't exist", async (done) => {
+
+      url = `/api/cities/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and city object if name is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", name);
+      expect(res.body).toHaveProperty("state", String(state._id));
+
+      done();
+    });
+  });
+
 });
