@@ -20,4 +20,20 @@ router.get("/by/state/:id", idValidator, async (req, res) => {
   return res.send(state.cities);
 });
 
+router.post("/", [auth, valid(validate)], async (req, res) => {
+
+  const state = await State.findById(req.body.state);
+  if(!state) return res.status(404).send({error: "Cannot find this state"});
+
+  const item = await City.getByName(req.body.name, state._id);
+  if (item) return res.status(200).send(item);
+
+  const city = await City.create(req.body);
+
+  state.cities.push(city._id);
+  await state.save();
+  
+  return res.status(201).send(_.pick(city, ["_id", "name", "state"]));
+});
+
 module.exports = router;
