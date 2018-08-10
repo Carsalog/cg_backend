@@ -55,4 +55,28 @@ router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) =>
   return res.send(_.pick(item, ["_id", "name", "state"]));
 });
 
+router.delete("/:id", [auth, su, idValidator], async (req, res) => {
+
+  const city = await City.findById(req.params.id);
+  if (!city) return res.status(404).send({error: "Cannot find this city"});
+
+  const state = await State.findById(city.state);
+
+  // Get index of a city
+  const index = state.cities.indexOf(req.params.id);
+
+  // If city in array remove it
+  if (index > -1) {
+    state.cities.splice(index, 1);
+    await state.save();
+  }
+
+  const name = String(city.name);
+
+  await city.remove();
+
+  // Return response
+  return res.send({info: `City ${name} was removed`});
+});
+
 module.exports = router;
