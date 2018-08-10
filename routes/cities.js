@@ -36,8 +36,19 @@ router.post("/", [auth, valid(validate)], async (req, res) => {
 
   state.cities.push(city._id);
   await state.save();
-  
+
   return res.status(201).send(_.pick(city, ["_id", "name", "state"]));
+});
+
+router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) => {
+
+  const state = await State.findById(req.body.state);
+  if (!state) return res.status(404).send({error: "Cannot find this state"});
+
+  const item = await City.update(req.body, req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this city"});
+
+  return res.send(_.pick(item, ["_id", "name", "state"]));
 });
 
 module.exports = router;
