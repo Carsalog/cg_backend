@@ -21,6 +21,10 @@ router.get("/by/state/:id", idValidator, async (req, res) => {
 });
 
 router.post("/", [auth, valid(validate)], async (req, res) => {
+  /**
+   * Create a new city
+   * @return Promise:
+   */
 
   const state = await State.findById(req.body.state);
   if(!state) return res.status(404).send({error: "Cannot find this state"});
