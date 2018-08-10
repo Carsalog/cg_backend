@@ -120,14 +120,26 @@ describe("/api/cities", () => {
   });
 
   describe("GET /:id", () => {
+    /**
+     * Test cases for CET on /api/cities/:id
+     */
 
     const prepare = () => {
-
+      /**
+       * Prepares and returns GET request
+       * @return Promise:
+       */
       return request(server).get(url);
     };
 
     beforeEach(async (done) => {
-
+      /**
+       * Before each test:
+       *    define: name
+       *    create: state, and city
+       *    generate: url
+       * @type {string}
+       */
       name = "model";
 
       state = await State({name: "state1", abbreviation: "ST"}).save();
@@ -138,7 +150,9 @@ describe("/api/cities", () => {
     });
 
     afterEach(async (done) => {
-
+      /**
+       * After each test remove state, and city
+       */
       await city.remove();
       await state.remove();
       done();
