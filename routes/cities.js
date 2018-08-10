@@ -56,6 +56,10 @@ router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) =>
 });
 
 router.delete("/:id", [auth, su, idValidator], async (req, res) => {
+  /**
+   * Remove a city
+   * @return Promise:
+   */
 
   const city = await City.findById(req.params.id);
   if (!city) return res.status(404).send({error: "Cannot find this city"});
