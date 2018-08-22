@@ -3,6 +3,11 @@ const bcrypt = require("bcrypt");
 const config = require("config");
 
 module.exports.createUser = async function (email, su) {
+  /**
+   * Creates user and returns a promise
+   * @type {User}
+   * @return Promise:
+   */
 
   return User({
     firstName: "John",
