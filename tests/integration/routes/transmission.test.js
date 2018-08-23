@@ -39,16 +39,25 @@ describe("/api/transmissions", () => {
   });
 
   describe("GET /", () => {
+    /**
+     * Test for GET on /api/transmissions
+     */
 
     let transmission1;
     let transmission2;
 
     const prepare = () => {
-
+      /**
+       * Return GET request
+       * @return Promise:
+       */
       return request(server).get(url);
     };
 
     beforeEach(async (done) => {
+      /**
+       * Before each test create transmissions and define url
+       */
 
       transmission1 = await Transmission({type: "tm01"}).save();
       transmission2 = await Transmission({type: "tm02"}).save();
@@ -57,6 +66,9 @@ describe("/api/transmissions", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove the transmissions
+       */
 
       await transmission1.remove();
       await transmission2.remove();
