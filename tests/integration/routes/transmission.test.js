@@ -254,4 +254,119 @@ describe("/api/transmissions", () => {
     });
   });
 
+  describe("PUT /:id", () => {
+
+    const prepare = () => {
+
+      return request(server).put(url).set("x-auth-token", token).send({type});
+    };
+
+    beforeEach(async (done) => {
+
+      type = "new type";
+      transmission = await Transmission({type: "type"}).save();
+
+      url = `/api/transmissions/${transmission._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await transmission.remove();
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async (done) => {
+
+      const res = await request(server).put(url).send({name});
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user is not admin", async (done) => {
+
+      user.su = false;
+      await user.save();
+      const __token = user.generateAuthToken();
+
+      const res = await request(server).put(url).set("x-auth-token", __token).send({type});
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 404 if user transmissions id is invalid", async (done) => {
+
+      url = "/api/transmissions/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if user transmission id doesn't exist", async (done) => {
+
+      url = `/api/transmissions/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if transmission type is invalid", async (done) => {
+
+      dataTypes.forEach(async data => {
+        type = data;
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it(`should return status code 400 if transmission type is less then ${config.get("transmission.type.min")}`, async (done) => {
+
+      type = Array(config.get("transmission.type.min")).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it(`should return status code 400 if transmission type is less then ${config.get("transmission.type.max")}`, async (done) => {
+
+      type = Array(config.get("transmission.type.max") + 2).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and transmission object if transmission type is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("type", type);
+
+      done();
+    });
+  });
+
 });
