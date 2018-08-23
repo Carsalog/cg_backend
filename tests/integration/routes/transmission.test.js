@@ -7,6 +7,9 @@ const utils = require("./utils");
 
 
 describe("/api/transmissions", () => {
+  /**
+   * Tests for /api/transmissions
+   */
 
   let user;
   let token;
@@ -17,6 +20,9 @@ describe("/api/transmissions", () => {
 
 
   beforeEach(async (done) => {
+    /**
+     * Before each test create a new user and generate token
+     */
 
     user = await utils.createUser("john.doe@transmission.test", true);
     token = await user.generateAuthToken();
@@ -24,6 +30,9 @@ describe("/api/transmissions", () => {
   });
 
   afterEach(async (done) => {
+    /**
+     * After each test remove the user
+     */
 
     await user.remove();
     await done();
