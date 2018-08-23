@@ -38,4 +38,39 @@ describe("/api/transmissions", () => {
     await done();
   });
 
+  describe("GET /", () => {
+
+    let transmission1;
+    let transmission2;
+
+    const prepare = () => {
+
+      return request(server).get(url);
+    };
+
+    beforeEach(async (done) => {
+
+      transmission1 = await Transmission({type: "tm01"}).save();
+      transmission2 = await Transmission({type: "tm02"}).save();
+      url = "/api/transmissions";
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await transmission1.remove();
+      await transmission2.remove();
+      done();
+    });
+
+    it("should return list of transmissions and status code 200", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 2).toBeTruthy();
+      done();
+    });
+  });
+
 });
