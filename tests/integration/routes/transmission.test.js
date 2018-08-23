@@ -383,4 +383,84 @@ describe("/api/transmissions", () => {
     });
   });
 
+  describe("DELETE /:id", () => {
+
+    const prepare = () => {
+
+      return request(server).delete(url).set("x-auth-token", token);
+    };
+
+    beforeEach(async (done) => {
+
+      type = "type";
+      transmission = await Transmission({type}).save();
+
+      url = `/api/transmissions/${transmission._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await transmission.remove();
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async (done) => {
+
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user is not admin", async (done) => {
+
+      user.su = false;
+      await user.save();
+
+      const __token = user.generateAuthToken();
+      const res = await request(server).delete(url).set("x-auth-token", __token);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 404 if transmission id is invalid", async (done) => {
+
+      url = "/api/transmissions/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if transmission id doesn't exist", async (done) => {
+
+      url = `/api/transmissions/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 end info message if transmission id is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+      expect(await Transmission.findOne({type})).toBe(null);
+
+      done();
+    });
+  });
 });
