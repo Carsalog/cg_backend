@@ -85,4 +85,58 @@ describe("/api/transmissions", () => {
     });
   });
 
+  describe("GET /:id", () => {
+
+    const prepare = () => {
+
+      return request(server).get(url);
+    };
+
+    beforeEach(async (done) => {
+
+      type = "type";
+      transmission = await Transmission({type}).save();
+      url = `/api/transmissions/${transmission._id}`;
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await transmission.remove();
+      done();
+    });
+
+    it("should return status code 404 if transmission id is invalid", async done => {
+
+      url = "/api/transmissions/1";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if transmission id does not exist", async (done) => {
+
+      url = `/api/transmissions/${mongoose.Types.ObjectId().toHexString()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and type object if type id is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("type", type);
+      done();
+    });
+  });
+
 });
