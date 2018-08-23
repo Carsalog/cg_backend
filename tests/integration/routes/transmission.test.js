@@ -152,4 +152,91 @@ describe("/api/transmissions", () => {
     });
   });
 
+  describe("POST /", () => {
+
+    const prepare = () => {
+
+      return request(server).post(url).set("x-auth-token", token).send({type});
+    };
+
+    beforeEach(async (done) => {
+
+      type = "type";
+      url = "/api/transmissions";
+      done();
+    });
+
+    afterEach(async (done) => {
+
+      await Transmission.remove({type});
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async (done) => {
+
+      const res = await request(server).post(url).send({name});
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if transmission type is invalid", async (done) => {
+
+      dataTypes.forEach(async data => {
+        type = data;
+        const res = await prepare();
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it(`should return 400 if transmission type is less than ${config.get("transmission.type.min")} characters`,
+
+      async (done) => {
+
+        type = Array(config.get("transmission.type.min")).join("a");
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+        done();
+    });
+
+    it(`should return 400 if transmission type is more than ${config.get("transmission.type.max")} characters`, async (done) => {
+
+      type = Array(config.get("transmission.type.max") + 2).join("a");
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and transmission object if transmission type already exists", async (done) => {
+
+      await Transmission({type}).save();
+
+      const res = await prepare();
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("type", type);
+
+      done();
+    });
+
+    it("should return status code 201 and transmission object if transmission type is valid", async (done) => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("type", type);
+
+      done();
+    });
+  });
+
 });
