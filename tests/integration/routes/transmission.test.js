@@ -153,13 +153,25 @@ describe("/api/transmissions", () => {
   });
 
   describe("POST /", () => {
+    /**
+     * Tests for POST on /api/transmissions
+     * @return Promise:
+     */
 
     const prepare = () => {
+      /**
+       * Return POST request
+       * @return Promise:
+       */
 
       return request(server).post(url).set("x-auth-token", token).send({type});
     };
 
     beforeEach(async (done) => {
+      /**
+       * Before each test define type and url
+       * @type {string}
+       */
 
       type = "type";
       url = "/api/transmissions";
@@ -167,6 +179,9 @@ describe("/api/transmissions", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove a transmission
+       */
 
       await Transmission.remove({type});
       done();
