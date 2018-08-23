@@ -255,13 +255,24 @@ describe("/api/transmissions", () => {
   });
 
   describe("PUT /:id", () => {
+    /**
+     * Tests for PUT on /api/transmissions/:id
+     */
 
     const prepare = () => {
+      /**
+       * Return PUT request
+       * @return Promise:
+       */
 
       return request(server).put(url).set("x-auth-token", token).send({type});
     };
 
     beforeEach(async (done) => {
+      /**
+       * Before each test create a transmission and define type and url
+       * @type {string}
+       */
 
       type = "new type";
       transmission = await Transmission({type: "type"}).save();
@@ -271,6 +282,9 @@ describe("/api/transmissions", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove the transmission
+       */
 
       await transmission.remove();
       done();
