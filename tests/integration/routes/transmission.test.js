@@ -86,13 +86,23 @@ describe("/api/transmissions", () => {
   });
 
   describe("GET /:id", () => {
+    /**
+     * Tests for GET on /api/transmissions/:id
+     */
 
     const prepare = () => {
-
+      /**
+       * Return GET request
+       * @return Promise:
+       */
       return request(server).get(url);
     };
 
     beforeEach(async (done) => {
+      /**
+       * Before each test create a transmission and define type and url
+       * @type {string}
+       */
 
       type = "type";
       transmission = await Transmission({type}).save();
@@ -101,6 +111,9 @@ describe("/api/transmissions", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove the transmission
+       */
 
       await transmission.remove();
       done();
