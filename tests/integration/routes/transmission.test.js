@@ -69,7 +69,7 @@ describe("/api/transmissions", () => {
       /**
        * After each test remove the transmissions
        */
-
+      
       await transmission1.remove();
       await transmission2.remove();
       done();
@@ -384,13 +384,24 @@ describe("/api/transmissions", () => {
   });
 
   describe("DELETE /:id", () => {
+    /**
+     * Tests for DELETE on /api/transmissions/:id
+     */
 
     const prepare = () => {
+      /**
+       * Return DELETE request
+       * @return Promise:
+       */
 
       return request(server).delete(url).set("x-auth-token", token);
     };
 
     beforeEach(async (done) => {
+      /**
+       * Before each test create a transmission and define type, url
+       * @type {string}
+       */
 
       type = "type";
       transmission = await Transmission({type}).save();
@@ -400,6 +411,9 @@ describe("/api/transmissions", () => {
     });
 
     afterEach(async (done) => {
+      /**
+       * After each test remove the transmission
+       */
 
       await transmission.remove();
       done();
