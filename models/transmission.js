@@ -69,3 +69,12 @@ transmission.statics.delById = function(_id) {
 
 
 module.exports.Transmission = mongoose.model(String(config.get("transmission.tableName")), transmission);
+
+
+module.exports.validate = function (object) {
+
+  return Joi.validate(object, {
+    _id: Joi.objectId(),
+    type: Joi.string().min(config.get("transmission.type.min")).max(config.get("transmission.type.max")).required()
+  });
+};
