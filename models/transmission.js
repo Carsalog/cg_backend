@@ -72,7 +72,10 @@ module.exports.Transmission = mongoose.model(String(config.get("transmission.tab
 
 
 module.exports.validate = function (object) {
-
+  /**
+   * Validate transmission fields
+   * @return object:
+   */
   return Joi.validate(object, {
     _id: Joi.objectId(),
     type: Joi.string().min(config.get("transmission.type.min")).max(config.get("transmission.type.max")).required()
