@@ -14,3 +14,40 @@ const transmission = new mongoose.Schema({
     trim: true
   }
 });
+
+transmission.statics.get = function() {
+
+  return this.find().select("-__v");
+};
+
+transmission.statics.getById = function(_id) {
+
+  return this.findById(_id).select("-__v");
+};
+
+transmission.statics.getByType = function(type) {
+
+  return this.findOne({type: { "$regex": type, "$options": "i" }}).select("-__v");
+};
+
+transmission.statics.add = function(type) {
+
+  return this(type).save();
+};
+
+transmission.statics.update = async function(type, _id) {
+
+  const item = await this.getById(_id);
+  if (!item) return null;
+
+  item.type = type;
+  return item.save();
+};
+
+transmission.statics.delById = function(_id) {
+
+  return this.findByIdAndRemove(_id);
+};
+
+
+module.exports.Transmission = mongoose.model(String(config.get("transmission.tableName")), transmission);
