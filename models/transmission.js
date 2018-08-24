@@ -16,27 +16,43 @@ const transmission = new mongoose.Schema({
 });
 
 transmission.statics.get = function() {
-
+  /**
+   * Get list of transmissions
+   * @return Promise:
+   */
   return this.find().select("-__v");
 };
 
 transmission.statics.getById = function(_id) {
-
+  /**
+   * Get transmissions by id
+   * @return Promise:
+   */
   return this.findById(_id).select("-__v");
 };
 
 transmission.statics.getByType = function(type) {
-
+  /**
+   * Get transmissions by type
+   * @return Promise:
+   */
   return this.findOne({type: { "$regex": type, "$options": "i" }}).select("-__v");
 };
 
 transmission.statics.add = function(type) {
+  /**
+   * Create a transmission
+   * @return Promise:
+   */
 
   return this(type).save();
 };
 
 transmission.statics.update = async function(type, _id) {
-
+  /**
+   * Update transmission type
+   * @return Promise:
+   */
   const item = await this.getById(_id);
   if (!item) return null;
 
@@ -45,7 +61,9 @@ transmission.statics.update = async function(type, _id) {
 };
 
 transmission.statics.delById = function(_id) {
-
+  /**
+   * Get remove transmission by id
+   */
   return this.findByIdAndRemove(_id);
 };
 
