@@ -1,5 +1,6 @@
 const express = require("express");
 const error = require("../middleware/error");
+const transmission = require("../routes/transmission");
 const cities = require("../routes/cities");
 const states = require("../routes/states");
 const auth = require("../routes/auth");
@@ -22,6 +23,7 @@ module.exports = function (app) {
   app.disable('x-powered-by');
 
   // Routs
+  app.use('/api/transmissions', transmission);
   app.use('/api/cities', cities);
   app.use('/api/states', states);
   app.use('/api/auth', auth);
