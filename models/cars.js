@@ -102,3 +102,16 @@ car.statics.delById = async function(_id) {
 };
 
 exports.Car = mongoose.model(String(config.get("cars.tableName")), car);
+
+exports.validate = function (obj) {
+
+  const schema = {
+    _id: Joi.objectId(),
+    vin: Joi.string().length(config.get("cars.vin.length")).regex(/^[A-z\d]{12}\d{5}$/).required(),
+    make: Joi.string().required(),
+    model: Joi.string().required(),
+    type: Joi.string().required(),
+    year: Joi.number().integer().min(config.get("cars.year.min")).max(currentYear).required(),
+  };
+  return Joi.validate(obj, schema);
+};
