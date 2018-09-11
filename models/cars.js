@@ -120,7 +120,10 @@ exports.validate = function (obj) {
 };
 
 exports.validateVIN = function (object) {
-
+  /**
+   * Validation for VIN
+   * @return Error|null:
+   */
   return Joi.validate(object,
     {vin: Joi.string().length(config.get("cars.vin.length")).regex(/^[A-z\d]{12}\d{5}$/).required()});
 };
