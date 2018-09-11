@@ -40,17 +40,28 @@ const car  = new mongoose.Schema({
 
 
 car.statics.create = function(car) {
-
+  /**
+   * Create a new car
+   *
+   * @type {Model}
+   * @return Promise:
+   */
   return this(car).save();
 };
 
 car.statics.getById = function(_id) {
-
+  /**
+   * Get car by id
+   * @return Object:
+   */
   return this.findById(_id).select("-__v");
 };
 
 car.statics.getByVIN = function(vin) {
-
+  /**
+   * Get car by id
+   * @return Object:
+   */
   return this.findOne({vin: vin}).select("-__v");
 };
 
@@ -62,6 +73,10 @@ car.statics.getByPage = function(page, amount) {
 };
 
 car.statics.update = function(obj, _id) {
+  /**
+   * Update car and return car object
+   * @return Promise:
+   */
 
   const car = this.findById(_id);
   if (!car) return null;
@@ -77,7 +92,9 @@ car.statics.update = function(obj, _id) {
 };
 
 car.statics.delById = async function(_id) {
-
+  /**
+   * Remove car by id
+   */
   const item = await this.findById(_id);
   if (!item) return null;
 
