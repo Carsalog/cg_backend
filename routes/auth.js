@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {getByEmail} = require("../models/users");
+const {User} = require("../models/users");
 const {verify} = require("../lib/hash");
 const express = require("express");
 const router = express.Router();
@@ -15,7 +15,7 @@ router.post("/", [pwValidator, valid(validate)], async (req, res) => {
    * @return Object:
    */
 
-  const user = await getByEmail(req.body.email);
+  const user = await User.getByEmail(req.body.email);
   const msg = {error: "Invalid email or password"};
 
   // Make sure that user with given email is not already registered

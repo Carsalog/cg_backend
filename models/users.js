@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const {hash} = require("../lib/hash");
 
 // Define mongoose schema
-const userSchema = new mongoose.Schema({
+const user = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -44,7 +44,11 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.methods.generateAuthToken = function () {
+user.statics.getById = function (_id) {
+  return this.findById(_id);
+};
+
+user.methods.generateAuthToken = function () {
   /**
    * Generates auth token for current client
    *
@@ -53,10 +57,72 @@ userSchema.methods.generateAuthToken = function () {
   return jwt.sign(_.pick(this, config.get("users.returns")), config.get("jwtPrivateKey"));
 };
 
-// Create user model
-const User = mongoose.model(String(config.get("users.tableName")), userSchema);
+user.statics.getById = function (_id) {
+  /**
+   * Get user by user id
+   *
+   * @return Promise:
+   */
+  return this.findById(_id).select("-password -__v");
+};
 
-function validateUser(user) {
+user.statics.getByEmail = function (email) {
+  /**
+   * Get user by email
+   *
+   * @return Promise:
+   */
+  return this.findOne({email: email});
+};
+
+user.statics.create = async function (user) {
+  /**
+   * Create a new user
+   *
+   * @type {Model}
+   * @return Promise:
+   */
+  return this({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+    password: await hash(user.password),
+    su: false
+  }).save();
+};
+
+user.statics.update = async function (_id, user) {
+  /**
+   * Update user if user existing else return null
+   *
+   * @return Promise;
+   */
+
+  let _user = await this.findById(_id);
+
+  if (!_user) return null;
+
+  _user.firstName = user.firstName;
+  _user.lastName = user.lastName;
+  _user.phone = user.phone;
+  _user.password = await hash(user.password);
+  return await _user.save();
+};
+
+user.statics.delById = function (objectId) {
+  /**
+   * Remove a user profile
+   *
+   * @return Promise:
+   */
+  return this.findByIdAndRemove(objectId);
+};
+
+// Create user model
+exports.User = mongoose.model(String(config.get("users.tableName")), user);
+
+exports.validate = function (user) {
   /**
    * Validate user data from a client
    *
@@ -77,75 +143,4 @@ function validateUser(user) {
   };
 
   return Joi.validate(user, schema);
-}
-
-async function getByEmail(email) {
-  /**
-   * Get user by email
-   *
-   * @return Promise:
-   */
-  return await User.findOne({email: email});
-}
-
-async function create(user) {
-  /**
-   * Create a new user
-   *
-   * @type {Model}
-   * @return Promise:
-   */
-  const newUser = new User({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    phone: user.phone,
-    password: await hash(user.password),
-    su: false
-  });
-
-  return await newUser.save();
-}
-
-async function update(_id, user) {
-  /**
-   * Update user if user existing else return null
-   *
-   * @return Promise;
-   */
-  let _user = await User.findById(_id);
-
-  if (!_user) return null;
-
-  _user.firstName = user.firstName;
-  _user.lastName = user.lastName;
-  _user.phone = user.phone;
-  _user.password = await hash(user.password);
-  return await _user.save();
-}
-
-async function remove(objectId) {
-  /**
-   * Remove a user profile
-   *
-   * @return Promise:
-   */
-  return await User.findByIdAndRemove(objectId);
-}
-
-async function getById(id) {
-  /**
-   * Get user by user id
-   *
-   * @return Promise:
-   */
-  return await User.findById(id).select("-password -__v");
-}
-
-exports.User = User;
-exports.validate = validateUser;
-exports.getByEmail = getByEmail;
-exports.create = create;
-exports.getById = getById;
-exports.update = update;
-exports.remove = remove;
+};
