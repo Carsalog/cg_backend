@@ -17,6 +17,12 @@ describe("/api/cars", () => {
   const createCar = vin => Car({vin, make, model, year, fuel, type}).save();
 
   beforeEach(async done => {
+    /**
+     * Before each test:
+     *    define: vin, type, make, model, fuel, year variables
+     *    create: user
+     *    generate: token
+     */
 
     vin = "WBA5A5C51FD520469";
     type = "sedan/saloon";
