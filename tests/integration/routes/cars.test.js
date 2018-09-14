@@ -38,6 +38,9 @@ describe("/api/cars", () => {
   });
 
   afterEach(async done => {
+    /**
+     * After each test remove user
+     */
 
     await user.remove();
     done();
