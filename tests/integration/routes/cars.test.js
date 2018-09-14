@@ -37,6 +37,11 @@ describe("/api/cars", () => {
     done();
   });
 
+  afterEach(async done => {
+
+    await user.remove();
+    done();
+  });
 
 });
 
