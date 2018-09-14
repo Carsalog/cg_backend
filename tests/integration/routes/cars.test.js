@@ -16,5 +16,21 @@ describe("/api/cars", () => {
   // Create car with given VIN
   const createCar = vin => Car({vin, make, model, year, fuel, type}).save();
 
+  beforeEach(async done => {
+
+    vin = "WBA5A5C51FD520469";
+    type = "sedan/saloon";
+    make = "BMW";
+    model = "528i";
+    fuel = "gasoline";
+    year = 2015;
+
+    user = await utils.createUser("john.doe@car.test", true);
+    token = await user.generateAuthToken();
+
+    done();
+  });
+
+
 });
 
