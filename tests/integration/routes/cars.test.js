@@ -225,5 +225,90 @@ describe("/api/cars", () => {
       done();
     });
   });
+
+  describe("PUT /:id", () => {
+
+    // Prepare and return PUT request on url (Promise)
+    const prepare = () => request(server).put(url).set("x-auth-token", token).send(data);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a car and define url and data object
+       */
+
+      car = await createCar(vin);
+
+      url = `/api/cars/${car._id}`;
+      data = {
+        vin:    vin,
+        make:   "make",
+        model:  "model",
+        type:   "type",
+        year:   2007,
+        fuel:   "hybrid",
+      };
+
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the car
+       */
+
+      await car.remove();
+      done();
+    });
+
+    it("should return status code 401 if user does not logged in", async done => {
+
+      const res = await request(server).put(url).send({});
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+
+    it("should return status code 400 if vin is invalid", async done => {
+
+      dataTypes.forEach(async type => {
+        data.vin = type;
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if vin was changed", async done => {
+
+      data.vin = "WBAFU9C50BC786021";
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 if vin valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("vin", vin);
+      expect(res.body).toHaveProperty("make", data.make);
+      expect(res.body).toHaveProperty("model", data.model);
+      expect(res.body).toHaveProperty("fuel", data.fuel);
+      expect(res.body).toHaveProperty("type", data.type);
+      expect(res.body).toHaveProperty("year", data.year);
+
+      done();
+    });
+  });
 });
 
