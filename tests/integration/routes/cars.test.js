@@ -6,6 +6,9 @@ const utils = require("./utils");
 
 
 describe("/api/cars", () => {
+  /**
+   * Test cases for /api/cars endpoint
+   */
 
   let fuel, type, make, model, user, token, url, vin, data, year, car;
   const dataTypes = [0, null, false, undefined, ""];
