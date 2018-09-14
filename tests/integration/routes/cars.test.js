@@ -112,5 +112,62 @@ describe("/api/cars", () => {
       done();
     });
   });
+
+  describe("GET /:id", () => {
+
+    // Prepare and return get request on url (Promise)
+    const prepare = () => request(server).get(url).set("x-auth-token", token);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a car and define url;
+       */
+
+      car = await createCar(vin);
+
+      url = `/api/cars/${car._id}`;
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the car
+       */
+
+      await car.remove();
+      done();
+    });
+
+    it("should return status code 404 if car id is invalid", async done => {
+
+      url = "/api/cars/1";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if car doesn't exist", async done => {
+
+      url = `/api/cars/${mongoose.Types.ObjectId().toHexString()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 if car exists", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      done();
+    });
+  });
 });
 
