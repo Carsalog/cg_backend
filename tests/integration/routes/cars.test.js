@@ -169,5 +169,61 @@ describe("/api/cars", () => {
       done();
     });
   });
+
+  describe("GET /by/vin/:vin", () => {
+
+    // Prepare and return request promise on url
+    const prepare = () => request(server).get(url).set("x-auth-token", token);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a car and define url
+       */
+
+      car = await createCar(vin);
+
+      url = `/api/cars/by/vin/${car.vin}`;
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the car
+       */
+
+      await car.remove();
+      done();
+    });
+
+    it("should return status code 400 if VIN is invalid", async done => {
+
+      url = "/api/cars/by/vin/invalidVIN";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 if VIN is valid and user is not admin", async done => {
+
+      user.su = false;
+      await user.save();
+      const _token = await user.generateAuthToken();
+      const res = await request(server).get(url).set("x-auth-token", _token);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("vin", vin);
+      expect(res.body).toHaveProperty("make", make);
+      expect(res.body).toHaveProperty("model", model);
+      expect(res.body).toHaveProperty("year", year);
+
+      user.su = true;
+      await user.save();
+      done();
+    });
+  });
 });
 
