@@ -10,11 +10,8 @@ describe("/api/cars", () => {
    * Test cases for /api/cars endpoint
    */
 
-  let fuel, type, make, model, user, token, url, vin, data, year, car;
+  let user, token, url, vin, data, car;
   const dataTypes = [0, null, false, undefined, ""];
-
-  // Create car with given VIN
-  const createCar = vin => Car({vin, make, model, year, fuel, type}).save();
 
   beforeEach(async done => {
     /**
@@ -25,11 +22,6 @@ describe("/api/cars", () => {
      */
 
     vin = "WBA5A5C51FD520469";
-    type = "sedan/saloon";
-    make = "BMW";
-    model = "528i";
-    fuel = "gasoline";
-    year = 2015;
 
     user = await utils.createUser("john.doe@car.test", true);
     token = await user.generateAuthToken();
@@ -60,9 +52,9 @@ describe("/api/cars", () => {
 
       url = "/api/cars";
 
-      car = await createCar(vin);
-      car2 = await createCar("WBA5A5C51FD520400");
-      car3 = await createCar("WBA5A5C51FD520401");
+      car = await utils.createCar(vin);
+      car2 = await utils.createCar("WBA5A5C51FD520400");
+      car3 = await utils.createCar("WBA5A5C51FD520401");
 
       done();
     });
@@ -123,7 +115,7 @@ describe("/api/cars", () => {
        * Before each test create a car and define url;
        */
 
-      car = await createCar(vin);
+      car = await utils.createCar(vin);
 
       url = `/api/cars/${car._id}`;
       done();
@@ -180,7 +172,7 @@ describe("/api/cars", () => {
        * Before each test create a car and define url
        */
 
-      car = await createCar(vin);
+      car = await utils.createCar(vin);
 
       url = `/api/cars/by/vin/${car.vin}`;
       done();
@@ -216,9 +208,9 @@ describe("/api/cars", () => {
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("_id");
       expect(res.body).toHaveProperty("vin", vin);
-      expect(res.body).toHaveProperty("make", make);
-      expect(res.body).toHaveProperty("model", model);
-      expect(res.body).toHaveProperty("year", year);
+      expect(res.body).toHaveProperty("make", "BMW");
+      expect(res.body).toHaveProperty("model", "528i");
+      expect(res.body).toHaveProperty("year", 2015);
 
       user.su = true;
       await user.save();
@@ -236,7 +228,7 @@ describe("/api/cars", () => {
        * Before each test create a car and define url and data object
        */
 
-      car = await createCar(vin);
+      car = await utils.createCar(vin);
 
       url = `/api/cars/${car._id}`;
       data = {
@@ -321,7 +313,7 @@ describe("/api/cars", () => {
        * Before each test create car and define url
        */
 
-      car = await createCar(vin);
+      car = await utils.createCar(vin);
 
       url = `/api/cars/${car._id}`;
 
