@@ -49,6 +49,10 @@ car.statics.create = function(car) {
   return this(car).save();
 };
 
+car.statics.getByPage = function(page, amount) {
+  return this.find().skip((page - 1) * amount).limit(amount).sort({make: 1}).select("-__v");
+};
+
 car.statics.getById = function(_id) {
   /**
    * Get car by id
@@ -65,20 +69,13 @@ car.statics.getByVIN = function(vin) {
   return this.findOne({vin: vin}).select("-__v");
 };
 
-car.statics.getByPage = function(page, amount) {
-  return this.find()
-    .skip((page - 1) * amount)
-    .select("-__v")
-    .limit(amount);
-};
-
-car.statics.update = function(obj, _id) {
+car.statics.update = async function(obj, _id) {
   /**
    * Update car and return car object
    * @return Promise:
    */
 
-  const car = this.findById(_id);
+  const car = await this.findById(_id);
   if (!car) return null;
   if (car.vin.toUpperCase() !== obj.vin.toUpperCase()) return null;
 
@@ -114,6 +111,7 @@ exports.validate = function (obj) {
     make: Joi.string().required(),
     model: Joi.string().required(),
     type: Joi.string().required(),
+    fuel: Joi.string().required(),
     year: Joi.number().integer().min(config.get("cars.year.min")).max(currentYear).required(),
   };
   return Joi.validate(obj, schema);
