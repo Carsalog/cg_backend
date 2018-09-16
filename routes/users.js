@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const {validate, getByEmail, create, getById, update, remove} = require("../models/users");
+const {User, validate} = require("../models/users");
 const express = require("express");
 const router = express.Router();
 const config = require("config");
@@ -15,7 +15,7 @@ router.get("/me", auth, async (req, res) => {
    *
    * @return Object:
    */
-  return res.send(await getById(req.user._id));
+  return res.send(await User.getById(req.user._id));
 });
 
 router.post("/", [pwValidator, valid(validate)], async (req, res) => {
@@ -26,10 +26,10 @@ router.post("/", [pwValidator, valid(validate)], async (req, res) => {
    */
 
   // Make sure that user with given email is not already registered
-  if (await getByEmail(req.body.email)) return res.status(400).send({error: "User already registered"});
+  if (await User.getByEmail(req.body.email)) return res.status(400).send({error: "User already registered"});
 
   // Return user object to a client
-  return res.status(201).send(_.pick(await create(req.body), config.get("users.returns")));
+  return res.status(201).send(_.pick(await User.create(req.body), config.get("users.returns")));
 });
 
 router.put("/:id", [pwValidator, valid(validate)], auth, async (req, res) => {
@@ -40,7 +40,7 @@ router.put("/:id", [pwValidator, valid(validate)], auth, async (req, res) => {
    * @return Object:
    */
 
-  const user = await update(req.params.id, req.body);
+  const user = await User.update(req.params.id, req.body);
 
   if (!user) return res.status(404).send({error: "Cannot find this user"});
 
@@ -56,7 +56,7 @@ router.delete("/:id", [auth, idValidator], async (req, res) => {
    */
 
   // Try to find the car model
-  const user = await remove(req.params.id);
+  const user = await User.delById(req.params.id);
   if (!user) return res.status(404).send({error: "Cannot find the user"});
 
   // Return response
