@@ -40,7 +40,7 @@ state.statics.getByPage = function(page, amount) {
    * Get list of makes by page/amount (pagination)
    * @return Promise:
    */
-  return this.find().skip((page - 1) * amount).limit(amount).sort({name: 1}).select("-__v");
+  return this.find().skip((page - 1) * amount).limit(amount).sort({name: 1}).select("-__v -cities");
 };
 
 state.statics.getByName = function (name) {
