@@ -50,6 +50,10 @@ car.statics.create = function(car) {
 };
 
 car.statics.getByPage = function(page, amount) {
+  /**
+   * Return list of cars by page
+   * @return Promise:
+   */
   return this.find().skip((page - 1) * amount).limit(amount).sort({make: 1}).select("-__v");
 };
 
