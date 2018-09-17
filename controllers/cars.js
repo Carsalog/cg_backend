@@ -5,6 +5,10 @@ const controller = {};
 
 
 controller.get = async (req, res) => {
+  /**
+   * Get amount of cars by page
+   * @return Object:
+   */
 
   res.send(await Car.getByPage(req.params.page, req.params.amount));
 };
