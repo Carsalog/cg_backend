@@ -69,4 +69,18 @@ controller.getByVIN = async (req, res) => {
     });
 };
 
+
+controller.put = async (req, res) => {
+
+  const _car = await Car.getById(req.params.id);
+
+  if (!_car) return res.status(404).send({error: "Cannot find the car"});
+  if (_car.vin !== req.body.vin) return res.status(400).send({error: "VIN doesn't match"});
+
+  const car = await Car.update(req.body, req.params.id);
+  if (!car) return res.status(500).send({error: "Something went wrong"});
+
+  return res.send(_.pick(car, ["_id", "make", "model", "type", "fuel", "vin", "year"]));
+};
+
 module.exports = controller;
