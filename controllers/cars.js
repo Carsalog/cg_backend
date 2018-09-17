@@ -13,4 +13,13 @@ controller.get = async (req, res) => {
   res.send(await Car.getByPage(req.params.page, req.params.amount));
 };
 
+
+controller.getById = async (req, res) => {
+
+  const car = await Car.getById(req.params.id);
+  if (!car) return res.status(404).send({error: "Cannot find the car"});
+
+  return res.send(car);
+};
+
 module.exports = controller;
