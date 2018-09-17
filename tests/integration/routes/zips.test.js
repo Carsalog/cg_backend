@@ -314,4 +314,234 @@ describe("/api/zips", () => {
       done();
     });
   });
+
+  describe("PUT /:id", () => {
+
+    let city2, state2;
+    const prepare = () => request(server).put(url).set("x-auth-token", token).send(data);
+
+    beforeAll(async done => {
+      /**
+       * Before all tests create state and city
+       */
+
+      state2 = await new State({name: "Washington", abbreviation: "WA"}).save();
+      city2 = await new City({name: "seattle", state: state2._id}).save();
+      done();
+    });
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a zip, define data and url
+       */
+
+      zip = await new Zip({
+        _id: 78701,
+        city: city2._id,
+        state: state2._id,
+        pop: 5801,
+        loc : [ -122.330456, 47.611435 ]}).save();
+
+      data = {
+        _id: 78701,
+        city: city._id,
+        state: state._id,
+        pop: 3857,
+        loc : [ -97.742559, 30.271289 ]};
+
+      url = `/api/zips/${zip._id}`;
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the zip
+       */
+
+      await zip.remove();
+      done();
+    });
+
+    afterAll(async done => {
+      /**
+       * After all tests remove city and state
+       */
+
+      await city2.remove();
+      await state2.remove();
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async done => {
+
+      const res = await request(server).put(url).send(data);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user isn't admin", async done => {
+
+      user.su = false;
+      await user.save();
+
+      const _token = await user.generateAuthToken();
+
+      const res = await request(server).put(url).set("x-auth-token", _token).send(data);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if zip id is invalid", async done => {
+
+      url = "/api/zips/invalidZipId";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if zip doesn't exist", async done => {
+
+      url = "/api/zips/00000";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if city id is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.city = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it("should return status code 404 if city id doesn't exist", async done => {
+
+      data.city = utils.getRandomId();
+
+      const res = await prepare();
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if state id is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+        data.state = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it("should return status code 404 if state id doesn't exist", async done => {
+
+      data.state = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if population is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        if (item !== 0) {
+          data.pop = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if location is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.loc = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if location coordinates is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        if (item !== 0) {
+          data.loc[0] = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if data is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 200 and zip object if data is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id", zip._id);
+      expect(res.body).toHaveProperty("city", String(data.city));
+      expect(res.body).toHaveProperty("state", String(data.state));
+      expect(res.body).toHaveProperty("pop", data.pop);
+      expect(res.body).toHaveProperty("loc");
+      expect(res.body.loc.length === 2).toBeTruthy();
+      done();
+    });
+  });
+
 });
