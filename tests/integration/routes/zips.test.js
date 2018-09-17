@@ -544,4 +544,86 @@ describe("/api/zips", () => {
     });
   });
 
+  describe("DELETE /:id", () => {
+
+    const prepare = () => request(server).delete(url).set("x-auth-token", token);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a zip and define url
+       */
+
+      zip = await Zip({
+        _id: 78701,
+        city: city._id,
+        state: state._id,
+        pop: 3857,
+        loc : [ -97.742559, 30.271289 ]}).save();
+
+      url = `/api/zips/${zip._id}`;
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the zip
+       */
+      await zip.remove();
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async done => {
+
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user isn't admin", async done => {
+
+      user.su = false;
+      await user.save();
+
+      const _token = await user.generateAuthToken();
+      const res = await request(server).delete(url).set("x-auth-token", _token);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 404 if zip id is invalid", async done => {
+
+      url = "/api/zips/invalidZipId";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if zip doesn't exist", async done => {
+
+      url = "/api/zips/00000";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and zip object if zip is exists", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id", zip._id);
+      done();
+    });
+  });
 });
