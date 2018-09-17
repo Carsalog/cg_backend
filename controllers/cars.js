@@ -71,6 +71,10 @@ controller.getByVIN = async (req, res) => {
 
 
 controller.put = async (req, res) => {
+  /**
+   * Update car
+   * @return Object:
+   */
 
   const _car = await Car.getById(req.params.id);
 
