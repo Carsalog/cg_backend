@@ -1,5 +1,7 @@
 const express = require("express");
 const error = require("../middleware/error");
+const cars = require("../routes/cars");
+const makes = require("../routes/makes");
 const transmission = require("../routes/transmission");
 const cities = require("../routes/cities");
 const states = require("../routes/states");
@@ -23,6 +25,15 @@ module.exports = function (app) {
   app.disable('x-powered-by');
 
   // Routs
+  app.use('/api/images', images);
+  app.use('/api/tags', tags);
+  app.use('/api/types', types);
+  app.use('/api/makes', makes);
+  app.use('/api/posts', posts);
+  app.use('/api/zips', zips);
+
+  app.use('/api/cars', cars);
+  app.use('/api/models', models);
   app.use('/api/transmissions', transmission);
   app.use('/api/cities', cities);
   app.use('/api/states', states);
