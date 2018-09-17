@@ -15,6 +15,10 @@ controller.get = async (req, res) => {
 
 
 controller.getById = async (req, res) => {
+  /**
+   * Get car by id
+   * @return Object:
+   */
 
   const car = await Car.getById(req.params.id);
   if (!car) return res.status(404).send({error: "Cannot find the car"});
