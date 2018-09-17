@@ -87,4 +87,12 @@ controller.put = async (req, res) => {
   return res.send(_.pick(car, ["_id", "make", "model", "type", "fuel", "vin", "year"]));
 };
 
+controller.delete = async (req, res) => {
+
+  const car = await Car.delById(req.params.id);
+  if (!car) return res.status(404).send({error: "Cannot find the car"});
+
+  return res.send(_.pick(car, ["_id", "make", "model", "type", "fuel", "vin", "year"]));
+};
+
 module.exports = controller;
