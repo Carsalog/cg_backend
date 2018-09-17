@@ -28,6 +28,10 @@ controller.getById = async (req, res) => {
 
 
 controller.getByVIN = async (req, res) => {
+  /**
+   * Get car by VIN
+   * @return Object:
+   */
 
   const { error } = validateVIN(req.params);
   if (error) return res.status(400).send({error: error.details[0].message});
