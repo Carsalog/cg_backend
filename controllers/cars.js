@@ -88,6 +88,10 @@ controller.put = async (req, res) => {
 };
 
 controller.delete = async (req, res) => {
+  /**
+   * Remove car
+   * @return Object:
+   */
 
   const car = await Car.delById(req.params.id);
   if (!car) return res.status(404).send({error: "Cannot find the car"});
