@@ -25,4 +25,17 @@ const zip = new mongoose.Schema({
   }
 });
 
+zip.statics.update = async function (data, _id) {
+
+  const item = await this.findById(_id);
+  if (!item) return null;
+
+  item.city = data.city;
+  item.state = data.state;
+  item.loc = data.loc;
+  item.pop = data.pop;
+
+  return item.save();
+};
+
 exports.Zip = mongoose.model(String(config.get("zips.tableName")), zip);
