@@ -26,6 +26,10 @@ const zip = new mongoose.Schema({
 });
 
 zip.statics.update = async function (data, _id) {
+  /**
+   * Update zip
+   * @return Promise:
+   */
 
   const item = await this.findById(_id);
   if (!item) return null;
