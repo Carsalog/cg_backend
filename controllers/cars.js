@@ -65,7 +65,7 @@ controller.getByVIN = async (req, res) => {
     })
     .catch(e => {
       console.log(e);
-      return res.status(500).send({error: "Cannot get the car with given VIN number"});
+      return res.status(400).send({error: "Cannot get the car with given VIN number"});
     });
 };
 
