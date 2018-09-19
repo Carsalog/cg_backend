@@ -3,5 +3,6 @@
   "bcrypt": {
     "hashRounds": 1
   },
-  "db": "mongodb://localhost:27017/carsalog_tests"
+  "db": "mongodb://localhost:27017/carsalog_tests",
+  "online": false
 }
