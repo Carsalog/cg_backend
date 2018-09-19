@@ -1,6 +1,8 @@
 const {User} = require("../../../models/users");
 const bcrypt = require("bcrypt");
 const config = require("config");
+const {Car} = require("../../../models/cars");
+const mongoose = require("mongoose");
 
 module.exports.createUser = async function (email, su) {
   /**
@@ -19,3 +21,11 @@ module.exports.createUser = async function (email, su) {
   }).save();
 };
 
+module.exports.createCar = vin => Car({
+  vin,
+  make: "BMW",
+  model: "528i",
+  year: 2015,
+  fuel: "gasoline",
+  type: "sedan"
+}).save();
