@@ -43,3 +43,14 @@ zip.statics.update = async function (data, _id) {
 };
 
 exports.Zip = mongoose.model(String(config.get("zips.tableName")), zip);
+
+exports.validate = function (obj) {
+
+  return Joi.validate(obj, {
+    _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
+    city: Joi.objectId().required(),
+    state: Joi.objectId().required(),
+    loc: Joi.array().items(Joi.number()).required(),
+    pop: Joi.number().integer().required()
+  });
+};
