@@ -45,6 +45,10 @@ zip.statics.update = async function (data, _id) {
 exports.Zip = mongoose.model(String(config.get("zips.tableName")), zip);
 
 exports.validate = function (obj) {
+  /**
+   * Validate model fields
+   * @return object:
+   */
 
   return Joi.validate(obj, {
     _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
