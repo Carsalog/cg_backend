@@ -29,3 +29,6 @@ module.exports.createCar = vin => Car({
   fuel: "gasoline",
   type: "sedan"
 }).save();
+
+// Return random id
+module.exports.getRandomId = () => mongoose.Types.ObjectId().toHexString();
