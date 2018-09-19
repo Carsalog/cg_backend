@@ -32,3 +32,5 @@ module.exports.createCar = vin => Car({
 
 // Return random id
 module.exports.getRandomId = () => mongoose.Types.ObjectId().toHexString();
+
+module.exports.getRandomToken = () => User({"_id": mongoose.Types.ObjectId().toHexString()}).generateAuthToken();
