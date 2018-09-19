@@ -3,6 +3,7 @@ const request = require("supertest");
 const mongoose = require("mongoose");
 const server = require("../../../loader");
 const utils = require("./utils");
+const config = require("config");
 
 
 describe("/api/cars", () => {
@@ -21,7 +22,7 @@ describe("/api/cars", () => {
      *    generate: token
      */
 
-    vin = "WBA5A5C51FD520469";
+    vin = "WBA5A5C51FD000000";
 
     user = await utils.createUser("john.doe@car.test", true);
     token = await user.generateAuthToken();
@@ -184,6 +185,7 @@ describe("/api/cars", () => {
        */
 
       await car.remove();
+      await Car.findOne({vin: "WBA5A5C51FD520469"}).remove();
       done();
     });
 
@@ -195,6 +197,21 @@ describe("/api/cars", () => {
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return SC 201 and car object if car didn't exist (online required)", async done => {
+
+      if (config.get("online")) {
+        url = "/api/cars/by/vin/WBA5A5C51FD520469";
+
+        const res = await prepare();
+
+        expect(res.status).toBe(201);
+        expect(res.body).toHaveProperty("_id");
+        expect(res.body).toHaveProperty("vin", "WBA5A5C51FD520469");
+      }
+
       done();
     });
 
