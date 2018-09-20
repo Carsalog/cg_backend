@@ -105,4 +105,64 @@ describe("/api/models", () => {
     });
   });
 
+  describe("GET /:id", () => {
+
+    // Prepare and return get request on url (Promise)
+    const prepare = () => request(server).get(url);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create model, define name and url
+       */
+
+      model = await Model({name: "model", make: make._id}).save();
+
+      url = `/api/models/${model._id}`;
+
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove model
+       */
+
+      await model.remove();
+      done();
+    });
+
+    it("should return status code 404 if model id is invalid", async done => {
+
+      url = "/api/models/invalidID";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if model id does not exist", async done => {
+
+      url = `/api/models/${utils.getRandomId()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and model object if model id is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", "model");
+
+      done();
+    });
+  });
+
 });
