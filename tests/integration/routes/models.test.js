@@ -424,4 +424,87 @@ describe("/api/models", () => {
     });
   });
 
+  describe("DELETE /:id", () => {
+
+    // Prepare and return DELETE request on url (Promise)
+    const prepare = () => request(server).delete(url).set("x-auth-token", token);
+
+    beforeEach(async done => {
+      /**
+       * Before each test define url and create model
+       */
+
+      model = await Model({name: "model", make: make._id}).save();
+
+      url = `/api/models/${model._id}`;
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove model
+       */
+
+      await model.remove();
+      done();
+    });
+
+    it("should return status code 401 if user does not logged in", async done => {
+
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user is not admin", async done => {
+
+      user.su = false;
+      await user.save();
+      const __token = await user.generateAuthToken();
+
+      const res = await request(server).delete(url).set("x-auth-token", __token);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 404 if model id is invalid", async done => {
+
+      url = "/api/models/1";
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if model id does not exist", async done => {
+
+      url = `/api/models/${mongoose.Types.ObjectId().toHexString()}`;
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and info message if model id is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+      expect(await Model.findOne({name})).toBe(null);
+
+      done();
+    });
+  });
 });
