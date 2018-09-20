@@ -16,6 +16,9 @@ describe("/api/models", () => {
   const dataTypes = [0, null, false, undefined, ""];
   
   beforeAll(async done => {
+    /**
+     * Before all tests create make, user and generate auth token
+     */
 
     user = await utils.createUser("john.doe@models.test", true);
     token = await user.generateAuthToken();
@@ -25,6 +28,9 @@ describe("/api/models", () => {
   });
 
   afterAll(async done => {
+    /**
+     * After all tests remove user, make
+     */
 
     await user.remove();
     await make.remove();
