@@ -285,4 +285,143 @@ describe("/api/models", () => {
     });
   });
 
+  describe("PUT /:id", () => {
+
+    let data;
+
+    const prepare = () => request(server).put(url).set("x-auth-token", token).send(data);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a model and define name, url, data
+       */
+
+      model = await Model({name: "model", make: make._id}).save();
+
+      url = `/api/models/${model._id}`;
+      data = {name: "new model", make: make._id};
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the model
+       */
+
+      await model.remove();
+      done();
+    });
+
+    it("should return status code 401 if user does not logged in", async done => {
+
+      const res = await request(server).put(url).send(data);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 403 if user is not admin", async done => {
+
+      user.su = false;
+      await user.save();
+      const __token = user.generateAuthToken();
+
+      const res = await request(server).put(url).set("x-auth-token", __token).send(data);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      // Set user privileges
+      user.su = true;
+      await user.save();
+      done();
+    });
+
+    it("should return status code 400 if name is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.name = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it(`should return status code 400 if name length less then
+        ${config.get("models.name.min")}`, async done => {
+
+      data.name = Array(config.get("models.name.min")).join("a");
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it(`should return status code 400 if name length more then
+        ${config.get("models.name.max")}`, async done => {
+
+      data.name = Array(config.get("models.name.max") + 2).join("a");
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if make doesn't exist", async done => {
+
+      data.make = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if model id is invalid", async done => {
+
+      url = "/api/models/invalidID";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 404 if model id doesn't exist", async done => {
+
+      url = `/api/models/${utils.getRandomId()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 200 and model object if name is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("name", data.name);
+
+      done();
+    });
+  });
+
 });
