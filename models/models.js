@@ -58,4 +58,13 @@ model.statics.update = async function (obj, _id) {
 
 exports.Model = mongoose.model(String(config.get("models.tableName")), model);
 
+exports.validate = function (obj) {
+
+  return Joi.validate(obj, {
+    _id: Joi.objectId(),
+    name: Joi.string().min(config.get("models.name.min")).max(config.get("models.name.max")).required(),
+    make: Joi.objectId().required()
+  });
+};
+
 
