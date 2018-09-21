@@ -18,21 +18,34 @@ const model = new mongoose.Schema({
 });
 
 model.statics.getById = function (_id) {
-
+  /**
+   * Returns a car model by id
+   * @return Promise:
+   */
   return this.findById(_id);
 };
 
 model.statics.create = function (data) {
-
+  /**
+   * Create a new car model
+   * @return Promise:
+   */
   return this(data).save();
 };
 
 model.statics.getByName = function (name, makeId) {
-
+  /**
+   * Return car model by name
+   * @return Promise:
+   */
   return this.findOne({name: { "$regex": name, "$options": "i" }, make: makeId}).select("-__v");
 };
 
 model.statics.update = async function (obj, _id) {
+  /**
+   * Update a car model
+   * @return Promise:
+   */
 
   // Try to get a car model
   const current = await this.findById(_id);
