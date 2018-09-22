@@ -10,6 +10,10 @@ const valid = require("../middleware/valid");
 
 
 router.get("/by/make/:id", idValidator, async (req, res) => {
+  /**
+   * Get amount of cars by page
+   * @return Promise:
+   */
 
   const make = await Make.getById(req.params.id);
   if (!make) return res.status(404).send({error: "Cannot find this make"});
@@ -18,6 +22,10 @@ router.get("/by/make/:id", idValidator, async (req, res) => {
 });
 
 router.post("/", [auth, valid(validate)], async (req, res) => {
+  /**
+   * Create a new car model
+   * @return Promise:
+   */
 
   const make = await Make.findById(req.body.make);
   if (!make) return res.status(404).send({error: "Cannot find this make"});
@@ -35,6 +43,10 @@ router.post("/", [auth, valid(validate)], async (req, res) => {
 });
 
 router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) => {
+  /**
+   * Update a car model
+   * @return Promise:
+   */
 
   const make = await Make.findById(req.body.make);
   if (!make) return res.status(404).send({error: "Cannot find this make"});
@@ -46,6 +58,10 @@ router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) =>
 });
 
 router.delete("/:id", [auth, su, idValidator], async (req, res) => {
+  /**
+   * Remove a car model
+   * @return Promise:
+   */
 
   // Try to find the car model
   const item = await Model.getById(req.params.id);
@@ -70,6 +86,9 @@ router.delete("/:id", [auth, su, idValidator], async (req, res) => {
 });
 
 router.get("/:id", idValidator, async (req, res) => {
+  /**
+   * Get car model by id
+   */
 
   const item = await Model.getById(req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find the car model"});
