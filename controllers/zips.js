@@ -81,6 +81,10 @@ controller.delete = async (req, res) => {
 
 
 function validate(obj) {
+  /**
+   * Validate model fields
+   * @return object:
+   */
 
   return Joi.validate(obj, {
     _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
