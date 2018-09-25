@@ -48,6 +48,10 @@ controller.post = async (req, res) => {
 
 
 controller.put = async (req, res) => {
+  /**
+   * Update and return zip info
+   * @return Promise:
+   */
 
   const state = await State.getById(req.body.state);
   if (!state) return res.status(404).send({error: "Cannot find this state"});
