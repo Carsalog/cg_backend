@@ -79,4 +79,16 @@ controller.delete = async (req, res) => {
   return res.send(_.pick(item, ["_id", "city", "state", "pop", "loc"]));
 };
 
+
+function validate(obj) {
+
+  return Joi.validate(obj, {
+    _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
+    city: Joi.string().required(),
+    state: Joi.string().required(),
+    loc: Joi.array().items(Joi.number()).required(),
+    pop: Joi.number().integer().required()
+  });
+}
+
 module.exports = controller;
