@@ -67,6 +67,10 @@ controller.put = async (req, res) => {
 
 
 controller.delete = async (req, res) => {
+  /**
+   * Remove zip code
+   * @return Promise:
+   */
 
   const item = await Zip.findByIdAndRemove(req.params.id);
 
