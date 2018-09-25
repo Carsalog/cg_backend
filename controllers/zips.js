@@ -46,4 +46,19 @@ controller.post = async (req, res) => {
   return res.send(_.pick(zip, ["_id", "state", "city", "loc", "pop"]));
 };
 
+
+controller.put = async (req, res) => {
+
+  const state = await State.getById(req.body.state);
+  if (!state) return res.status(404).send({error: "Cannot find this state"});
+
+  const city = await City.getById(req.body.city);
+  if (!city) return res.status(404).send({error: "Cannot find this city"});
+
+  const item = await Zip.update(req.body, req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this city"});
+
+  return res.send(_.pick(item, ["_id", "city", "state", "pop", "loc"]));
+};
+
 module.exports = controller;
