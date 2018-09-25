@@ -19,4 +19,27 @@ controller.get = async (req, res) => {
   return res.send(_.pick(zip, ["_id", "city", "state", "loc", "pop"]));
 };
 
+
+controller.post = async (req, res) => {
+
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  const state = await State.getByName(req.body.state);
+  if (!state) return res.status(404).send({error: "Cannot find this state"});
+
+  const city = await City.getByName(req.body.city, state._id);
+  if (!city) return res.status(404).send({error: "Cannot find this city"});
+
+  const zip = await Zip({
+    _id: req.body._id,
+    city: city._id,
+    state: state._id,
+    loc: req.body.loc,
+    pop: req.body.pop
+  }).save();
+
+  return res.send(_.pick(zip, ["_id", "state", "city", "loc", "pop"]));
+};
+
 module.exports = controller;
