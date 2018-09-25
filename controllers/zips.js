@@ -8,6 +8,10 @@ const controller = {};
 
 
 controller.get = async (req, res) => {
+  /**
+   * Return state and city by zip code
+   * @return Promise:
+   */
 
   const zip = await Zip.findById(req.params.id);
   if (!zip) return res.status(404).send({error: "Cannot find this zip code"});
