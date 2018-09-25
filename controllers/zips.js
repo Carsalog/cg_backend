@@ -21,6 +21,10 @@ controller.get = async (req, res) => {
 
 
 controller.post = async (req, res) => {
+  /**
+   * Create a zip object
+   * @return Promise:
+   */
 
   const { error } = validate(req.body);
   if (error) return res.status(400).send({error: error.details[0].message});
