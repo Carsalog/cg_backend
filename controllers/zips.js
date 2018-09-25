@@ -65,4 +65,14 @@ controller.put = async (req, res) => {
   return res.send(_.pick(item, ["_id", "city", "state", "pop", "loc"]));
 };
 
+
+controller.delete = async (req, res) => {
+
+  const item = await Zip.findByIdAndRemove(req.params.id);
+
+  if (!item) return res.status(404).send({error: "Cannot find this zip"});
+
+  return res.send(_.pick(item, ["_id", "city", "state", "pop", "loc"]));
+};
+
 module.exports = controller;
