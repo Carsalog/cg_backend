@@ -258,6 +258,10 @@ exports.validate = function (obj) {
 };
 
 exports.validatePUT = function (obj) {
+  /**
+   * Validate post for put query object if it invalid return error message
+   * @return Object:
+   */
 
   const schema = {
     _id: Joi.objectId(),
