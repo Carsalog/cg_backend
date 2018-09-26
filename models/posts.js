@@ -256,3 +256,27 @@ exports.validate = function (obj) {
   };
   return Joi.validate(obj, schema);
 };
+
+exports.validatePUT = function (obj) {
+
+  const schema = {
+    _id: Joi.objectId(),
+    description: Joi.string()
+      .min(config.get("posts.description.min"))
+      .max(config.get("posts.description.max"))
+      .required(),
+    state: Joi.objectId().required(),
+    city: Joi.objectId().required(),
+    transmission: Joi.objectId().required(),
+    isActive: Joi.boolean(),
+    mileage: Joi.number()
+      .min(config.get("posts.mileage.min"))
+      .max(config.get("posts.mileage.max"))
+      .required(),
+    price: Joi.number().integer()
+      .min(config.get("posts.price.min"))
+      .max(config.get("posts.price.max"))
+      .required()
+  };
+  return Joi.validate(obj, schema);
+};
