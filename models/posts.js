@@ -218,6 +218,10 @@ posts.statics.delById = async function (_id) {
 exports.Post = mongoose.model(String(config.get("posts.tableName")), posts);
 
 exports.validate = function (obj) {
+  /**
+   * Validate post object if it invalid return error message
+   * @return Object:
+   */
 
   const schema = {
     _id: Joi.objectId(),
@@ -252,4 +256,3 @@ exports.validate = function (obj) {
   };
   return Joi.validate(obj, schema);
 };
-
