@@ -86,6 +86,12 @@ const posts = new mongoose.Schema({
 
 
 posts.statics.create = async function (data) {
+  /**
+   * Create a new post
+   *
+   * @type {Model}
+   * @return Promise:
+   */
 
   const item = await this(data).save();
 
@@ -103,6 +109,10 @@ posts.statics.create = async function (data) {
 };
 
 posts.statics.getById = function (_id) {
+  /**
+   * Get car by id
+   * @return Promise:
+   */
 
   return this.findById(_id)
     .populate("car", "vin make model fuel type year")
@@ -118,6 +128,10 @@ posts.statics.getById = function (_id) {
 };
 
 posts.statics.addTsg = async function (_id, tag) {
+  /**
+   * Add a tag to the post object
+   * @return Promise:
+   */
 
   const item = await this.getById(_id);
   item.tags.push(tag);
@@ -125,6 +139,10 @@ posts.statics.addTsg = async function (_id, tag) {
 };
 
 posts.statics.getByVIN = function (vin) {
+  /**
+   * Get car by id
+   * @return Object:
+   */
 
   return this.findOne({vin: vin})
     .populate("car", "vin make model fuel type")
@@ -138,6 +156,10 @@ posts.statics.getByVIN = function (vin) {
 };
 
 posts.statics.getByPage = function (page, amount, city, state, make, model, yearMin, yearMax) {
+  /**
+   * Search posts in given state/city and return amount of post by page
+   * @return Promise:
+   */
 
   let data = {city, state, isActive: true};
   if (make) data.make = make;
@@ -163,6 +185,10 @@ posts.statics.getByPage = function (page, amount, city, state, make, model, year
 };
 
 posts.statics.update = async function (obj, _id) {
+  /**
+   * Update post and return post object
+   * @return Promise:
+   */
 
   const item = await this.findById(_id);
 
@@ -179,6 +205,9 @@ posts.statics.update = async function (obj, _id) {
 };
 
 posts.statics.delById = async function (_id) {
+  /**
+   * Remove post by id
+   */
 
   const item = await this.findById(_id);
   if (!item) return null;
