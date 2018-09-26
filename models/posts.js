@@ -85,4 +85,105 @@ const posts = new mongoose.Schema({
 });
 
 
+posts.statics.create = async function (data) {
+
+  const item = await this(data).save();
+
+  if (item._id === undefined) return null;
+
+  return this.findById(item._id)
+    .populate("transmission", "type")
+    .populate("car", "vin make model fuel type year")
+    .populate("state", "name")
+    .populate("city", "name")
+    .populate("make", "name")
+    .populate("model", "name")
+    .populate("transmission", "type")
+    .populate("author", "firstName lastName phone email")
+};
+
+posts.statics.getById = function (_id) {
+
+  return this.findById(_id)
+    .populate("car", "vin make model fuel type year")
+    .populate("tags", "name")
+    .populate("transmission", "type")
+    .populate("state", "name")
+    .populate("city", "name")
+    .populate("make", "name")
+    .populate("model", "name")
+    .populate("images", "url")
+    .populate("author", "firstName lastName phone email")
+    .select("-__v");
+};
+
+posts.statics.addTsg = async function (_id, tag) {
+
+  const item = await this.getById(_id);
+  item.tags.push(tag);
+  return item.save();
+};
+
+posts.statics.getByVIN = function (vin) {
+
+  return this.findOne({vin: vin})
+    .populate("car", "vin make model fuel type")
+    .populate("tags", "name")
+    .populate("transmission", "type")
+    .populate("state", "name")
+    .populate("city", "name")
+    .populate("images", "url")
+    .populate("author", "firstName lastName phone email")
+    .select("-__v");
+};
+
+posts.statics.getByPage = function (page, amount, city, state, make, model, yearMin, yearMax) {
+
+  let data = {city, state, isActive: true};
+  if (make) data.make = make;
+  if (model) data.model = model;
+
+  if (yearMin || yearMax) data.year = {};
+  if (yearMin) data.year.$gte = yearMin;
+  if (yearMax) data.year.$lte = yearMax;
+
+  return this.find(data)
+    .skip((page - 1) * amount)
+    .populate("car", "-__v")
+    .populate("tags", "name")
+    .populate("make", "name")
+    .populate("model", "-__v")
+    .populate("transmission", "type")
+    .populate("state", "name")
+    .populate("city", "name")
+    .populate("images", "url")
+    .populate("author", "firstName lastName phone email")
+    .select("-__v")
+    .limit(amount);
+};
+
+posts.statics.update = async function (obj, _id) {
+
+  const item = await this.findById(_id);
+
+  if (obj.isActive === false || obj.isActive === true) item.isActive = obj.isActive;
+
+  item.description = obj.description;
+  item.transmission = obj.transmission;
+  item.state = obj.state;
+  item.city = obj.city;
+  item.mileage = obj.mileage;
+  item.price = obj.price;
+
+  return item.save();
+};
+
+posts.statics.delById = async function (_id) {
+
+  const item = await this.findById(_id);
+  if (!item) return null;
+
+  return item.remove();
+};
+
 exports.Post = mongoose.model(String(config.get("posts.tableName")), posts);
