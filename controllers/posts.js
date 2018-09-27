@@ -69,4 +69,23 @@ controller.put = async (req, res) => {
   return res.send(await Post.update(req.body, req.params.id));
 };
 
+
+controller.delete = async (req, res) => {
+
+  const user = await User.getById(req.user._id);
+  if(!user) return res.status(404).send({error: "Cannot find this user"});
+
+  const item = await Post.getById(req.params.id);
+
+  if (!item) return res.status(404).send({error: "Cannot find this post"});
+
+  // If user isn't author and isn't admin return error message
+  if (!user.su && user._id !== item.author._id)
+    return res.status(403).send({error: "You cannot remove this post"});
+
+  await item.remove();
+
+  return res.send({info: "This post was removed"});
+};
+
 module.exports = controller;
