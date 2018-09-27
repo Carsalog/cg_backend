@@ -59,4 +59,10 @@ controller.post = async (req, res) => {
   return res.status(201).send(_.pull(await Post.create(req.body), ["-__v"]));
 };
 
+
+controller.put = async (req, res) => {
+
+  return res.send(await Post.update(req.body, req.params.id));
+};
+
 module.exports = controller;
