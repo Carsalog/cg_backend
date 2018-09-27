@@ -36,4 +36,13 @@ controller.get = async (req, res) => {
     data.page, data.amount, city._id, state._id, make, model, data.yearMin, data.yearMax));
 };
 
+
+controller.getById = async (req, res) => {
+
+  const item = await Post.getById(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this post"});
+
+  return res.send(item);
+};
+
 module.exports = controller;
