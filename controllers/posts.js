@@ -9,6 +9,10 @@ const controller = {};
 
 
 controller.get = async (req, res) => {
+  /**
+   * Get amount of posts by page
+   * @return Object:
+   */
 
   let make = null, model = null;
   const data = req.params;
