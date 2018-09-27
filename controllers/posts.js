@@ -71,6 +71,10 @@ controller.put = async (req, res) => {
 
 
 controller.delete = async (req, res) => {
+  /**
+   * Remove a post
+   * @return Object:
+   */
 
   const user = await User.getById(req.user._id);
   if(!user) return res.status(404).send({error: "Cannot find this user"});
