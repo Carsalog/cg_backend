@@ -61,6 +61,10 @@ controller.post = async (req, res) => {
 
 
 controller.put = async (req, res) => {
+  /**
+   * Update a post
+   * @return Object:
+   */
 
   return res.send(await Post.update(req.body, req.params.id));
 };
