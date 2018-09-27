@@ -49,4 +49,10 @@ controller.getById = async (req, res) => {
   return res.send(item);
 };
 
+
+controller.post = async (req, res) => {
+
+  return res.status(201).send(_.pull(await Post.create(req.body), ["-__v"]));
+};
+
 module.exports = controller;
