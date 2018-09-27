@@ -51,6 +51,10 @@ controller.getById = async (req, res) => {
 
 
 controller.post = async (req, res) => {
+  /**
+   * Create a new post
+   * @return Object:
+   */
 
   return res.status(201).send(_.pull(await Post.create(req.body), ["-__v"]));
 };
