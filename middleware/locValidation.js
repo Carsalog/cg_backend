@@ -1,6 +1,9 @@
 const {isFloat} = require("../lib/tools");
 
 module.exports = function (req, res, next) {
+  /**
+   * Zip id validator middleware. Checks that id is valid, else return 404 error
+   */
 
   const loc = req.body.loc;
 
