@@ -23,6 +23,12 @@ function validate(parameters) {
 }
 
 module.exports = function (req, res, next) {
+  /**
+   * Validate GET parameters, if parameters do not pass
+   * create parameters with default values or return error
+   * message. Then Add to request new parameters, and pass
+   * control to next middleware function.
+   */
 
   // Validate GET parameters
   const { error } = validate(req.query);
