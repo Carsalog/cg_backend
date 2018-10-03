@@ -33,6 +33,12 @@ describe("/api/posts", () => {
   }).save();
 
   beforeAll(async done => {
+    /**
+     * Before all tests:
+     *    Create: user, car, make, model, state, city, transmission
+     *    Generate: token
+     *    Define: vin
+     */
 
     vin = "WBA5A5C55FD520474";
 
@@ -51,6 +57,9 @@ describe("/api/posts", () => {
   });
 
   afterAll(async done => {
+    /**
+     * After all tests remove: user, car, make, model, state, city, transmission
+     */
 
     await user.remove();
     await badUser.remove();
