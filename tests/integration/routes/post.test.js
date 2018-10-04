@@ -762,4 +762,240 @@ describe("/api/posts", () => {
     });
   });
 
+  describe("PUT /:id", () => {
+
+    let data, state2, city2, transmission2;
+
+    // Prepare and return PUT request
+    const prepare = () => request(server).put(url).set("x-auth-token", token).send(data);
+
+    beforeAll(async done => {
+      /**
+       * Before all tests create: state, city, and transmission
+       */
+
+      state2 = await State({name: "California", abbreviation: "CA"}).save();
+      city2 = await City({name: "San Francisco", state: state2._id}).save();
+      transmission2 = await Transmission({type: "Manual"}).save();
+      done();
+    });
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a post, and define data, url
+       */
+
+      post = await createPost("A description", 20000, 60000);
+
+      url = `/api/posts/${post._id}`;
+
+      data = {
+        state: state2._id,
+        city: city2._id,
+        transmission: transmission2._id,
+        isActive: false,
+        description: "A new description",
+        mileage: 70000,
+        price: 18000
+      };
+
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the post
+       */
+
+      await post.remove();
+      done();
+    });
+
+    afterAll(async done => {
+      /**
+       * After all tests remove state, city, transmission
+       */
+
+      await state2.remove();
+      await city2.remove();
+      await transmission2.remove();
+      done();
+    });
+
+    it("should return status code 400 if state is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.state = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if state doesn't exist", async done => {
+
+      data.state = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if city is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.city = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if city doesn't exist", async done => {
+
+      data.city = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+
+      done();
+    });
+
+    it("should return status code 400 if transmission is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.transmission = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if transmission doesn't exist", async done => {
+
+      data.transmission = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if description is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+        if (item !== "") {
+          data.description = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if mileage is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+        if (item !== 0) {
+          data.mileage = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if price is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+        if (item !== 0) {
+          data.price = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if isActive is invalid", async done => {
+
+      [0, null, "", [], {}].forEach(async item => {
+
+        data.isActive = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 403 if the user tries to edit a post of another user", async done => {
+
+      const res = await request(server).put(url).set("x-auth-token", _token).send(data);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if the city and the state doesn't match", async done => {
+
+      data.state = state._id;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 200 and updated object if data is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      done();
+    });
+  });
+
 });
