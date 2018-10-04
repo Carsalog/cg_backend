@@ -394,4 +394,372 @@ describe("/api/posts", () => {
     });
   });
 
+  describe("POST /", () => {
+
+    let data;
+
+    // Prepare and return POST request on url (Promise)
+    const prepare = () => request(server).post(url).set("x-auth-token", token).send(data);
+
+    beforeEach(async done => {
+      /**
+       * Before each test define url, data
+       * @type {{description: string, make: string, model: string, transmission: string, state: string, car: string,
+       *        year: integer, city: string, author: string, mileage: integer, price: integer}}
+       */
+
+      data = {
+        description: "A description",
+        make: make._id,
+        model: model._id,
+        transmission: transmission._id,
+        state: state._id,
+        car: car._id,
+        year: car.year,
+        city: city._id,
+        author: user._id,
+        mileage: 60000,
+        price: 20000
+      };
+
+      url = "/api/posts";
+
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove a post
+       */
+
+      await Post.remove({description: "A description"});
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async done => {
+
+      const res = await request(server).post(url).send(data);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if description is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+        if (item !== "") {
+          data.description = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it(`should return status code 400 if description is less than 
+        ${config.get("posts.description.min")} characters`, async done => {
+      const minLength = config.get("posts.description.min");
+      if (minLength !== 0) {
+        data.description = Array(minLength).join("a");
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      }
+      done();
+    });
+
+    it(`should return status code 400 if description is more than 
+        ${config.get("posts.description.max")} characters`, async done => {
+
+      data.description = Array(config.get("posts.description.max") + 2).join("a");
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return status code 400 if make is invalid", async done => {
+      dataTypes.forEach(async item => {
+
+        data.make = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it("should return status code 404 if make doesn't exist", async done => {
+
+      data.make = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if model is invalid", async done => {
+      dataTypes.forEach(async item => {
+
+        data.model = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+      done();
+    });
+
+    it("should return status code 404 if model doesn't exist", async done => {
+
+      data.model = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if state is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.state = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if state doesn't exist", async done => {
+
+      data.state = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if city is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.city = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if city doesn't exist", async done => {
+
+      data.city = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if transmission is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.transmission = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if transmission doesn't exist", async done => {
+
+      data.transmission = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if year is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.year = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it(`should return status code 400 if year is less than ${config.get("cars.year.min")}`, async done => {
+
+      data.year = config.get("cars.year.min") - 1;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it(`should return status code 400 if year is more than ${currentYear}`, async done => {
+
+      data.year = currentYear + 1;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if car is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        data.car = item;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if car doesn't exist", async done => {
+
+      data.car = utils.getRandomId();
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if mileage is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        if (item !== 0) {
+
+          data.mileage = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 400 if price is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        if (item !== 0) {
+
+          data.price = item;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(400);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+
+      done();
+    });
+
+    it("should return status code 201 and a post object if data is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("isActive", true);
+      expect(res.body).toHaveProperty("images");
+      expect(res.body).toHaveProperty("tags");
+      expect(res.body).toHaveProperty("date");
+      expect(res.body).toHaveProperty("make");
+      expect(res.body).toHaveProperty("model");
+      expect(res.body).toHaveProperty("state");
+      expect(res.body).toHaveProperty("city");
+      expect(res.body).toHaveProperty("transmission");
+      expect(res.body).toHaveProperty("year", car.year);
+      expect(res.body).toHaveProperty("mileage", 60000);
+      expect(res.body).toHaveProperty("price", 20000);
+      expect(res.body.make).toHaveProperty("name", make.name);
+      expect(res.body.model).toHaveProperty("name", model.name);
+      expect(res.body.state).toHaveProperty("name", state.name);
+      expect(res.body.city).toHaveProperty("name", city.name);
+      expect(res.body.transmission).toHaveProperty("type", transmission.type);
+      expect(res.body.car).toHaveProperty("_id");
+      expect(res.body.car).toHaveProperty("make", car.make);
+      expect(res.body.car).toHaveProperty("type", car.type);
+      expect(res.body.car).toHaveProperty("model", car.model);
+      expect(res.body.car).toHaveProperty("fuel", car.fuel);
+      expect(res.body.car).toHaveProperty("year", car.year);
+      expect(res.body.car).toHaveProperty("vin", car.vin);
+      expect(res.body.author).toHaveProperty("_id");
+      expect(res.body.author).toHaveProperty("firstName", user.firstName);
+      expect(res.body.author).toHaveProperty("lastName", user.lastName);
+      expect(res.body.author).toHaveProperty("email", user.email);
+      expect(res.body.author).toHaveProperty("phone", user.phone);
+      expect(Array.isArray(res.body.images)).toBeTruthy();
+      expect(Array.isArray(res.body.tags)).toBeTruthy();
+
+      done();
+    });
+  });
+
 });
