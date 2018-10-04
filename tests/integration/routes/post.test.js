@@ -998,4 +998,67 @@ describe("/api/posts", () => {
     });
   });
 
+  describe("DELETE /:id", () => {
+
+    // Prepare and return DELETE request on url
+    const prepare = () => request(server).delete(url).set("x-auth-token", token);
+
+    beforeEach(async done => {
+      /**
+       * Before each test
+       */
+
+      post = await createPost("A description", 20000, 60000);
+      url = `/api/posts/${post._id}`;
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the post
+       */
+
+      await post.remove();
+      done();
+    });
+
+    it("should return status code 401 if user doesn't logged in", async done => {
+
+      const res = await request(server).delete(url);
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it("should return 403 if user doesn't have permission to remove the post", async done => {
+
+      const res = await request(server).delete(url).set("x-auth-token", _token);
+
+      expect(res.status).toBe(403);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return 404 if user doesn't have permission to remove the post", async done => {
+
+      const res = await request(server).delete(url).set("x-auth-token", await utils.getRandomToken());
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return 200 if user and post id is valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("info");
+
+      done();
+    });
+  });
 });
