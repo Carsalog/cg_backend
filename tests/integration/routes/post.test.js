@@ -73,4 +73,235 @@ describe("/api/posts", () => {
     done();
   });
 
+  describe("GET /", () => {
+
+    let post2, post3;
+
+    const prepare = () => request(server).get(url);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create 3 posts, and define url
+       */
+
+      url = "/api/posts?state=texas&city=austin";
+
+      post = await createPost("description", 20000, 60000);
+      post2 = await createPost("description2", 20002, 60002);
+      post3 = await createPost("description3", 20003, 60003);
+
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the posts
+       */
+
+      await post.remove();
+      await post2.remove();
+      await post3.remove();
+
+      done();
+    });
+
+    it("should return status code 400 if city doesn't pass", async done => {
+
+      url = "/api/posts?state=texas";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 400 if state doesn't pass", async done => {
+
+      url = "/api/posts?city=austin";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if state doesn't exist", async done => {
+
+      url = "/api/posts?state=state&city=austin";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if city doesn't exist", async done => {
+
+      url = "/api/posts?state=texas&city=city";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if make passed but doesn't exist", async done => {
+
+      url = "/api/posts?state=texas&city=austin&make=make";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if model passed but doesn't exist", async done => {
+
+      url = "/api/posts?state=texas&city=austin&make=bmw&model=model";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if model passed without make", async done => {
+
+      url = "/api/posts?state=texas&city=austin&model=5 series";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+
+      done();
+    });
+
+    it("should return status code 404 if min year is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        url = `/api/posts?state=texas&city=austin&yearMin=${item}`;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 404 if max year is invalid", async done => {
+
+      dataTypes.forEach(async item => {
+
+        url = `/api/posts?state=texas&city=austin&yearMax=${item}`;
+
+        const res = await prepare();
+
+        expect(res.status).toBe(400);
+        expect(res.body).toHaveProperty("error");
+      });
+
+      done();
+    });
+
+    it("should return status code 200 if state and city valid", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 3).toBeTruthy();
+
+      done();
+    });
+
+    it("should return status code 200 if passed page and amount", async done => {
+
+      const amount = 2;
+
+      url += "&page=1&amount=" + amount;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length === amount).toBeTruthy();
+
+      done();
+    });
+
+    it("should return status code 200 if passed a valid make", async done => {
+
+      url += "&make=bmw";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 3).toBeTruthy();
+
+      done();
+    });
+
+    it("should return status code 200 if passed a valid make and model", async done => {
+
+      url += "&make=bmw&model=5 series";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 3).toBeTruthy();
+
+      done();
+    });
+
+    it("should return status code 200 if passed a minYear > than car year", async done => {
+
+      url += "&make=bmw&model=5 series&yearMin=2016";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length === 0).toBeTruthy();
+
+      done();
+    });
+
+    it("should return 200 and empty array if passed a maxYear < than car year", async done => {
+
+      url += "&make=bmw&model=5 series&yearMax=2014";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length === 0).toBeTruthy();
+
+      done();
+    });
+
+    it("should return 200 and cars if passed min and max year and cars between them", async done => {
+
+      url += "&make=bmw&model=5 series&yearMax=2016&yearMin=2014";
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body.length >= 3).toBeTruthy();
+
+      done();
+    });
+  });
+
 });
