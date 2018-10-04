@@ -304,4 +304,94 @@ describe("/api/posts", () => {
     });
   });
 
+  describe("GET /:id", () => {
+
+    // Prepare and return get request on url (Promise)
+    const prepare = () => request(server).get(url);
+
+    beforeEach(async done => {
+      /**
+       * Before each test create a post and define url
+       */
+
+      post = await createPost("description", 20000, 60000);
+      url = `/api/posts/${post._id}`;
+
+      done();
+    });
+
+    afterEach(async done => {
+      /**
+       * After each test remove the post
+       */
+
+      await post.remove();
+      done();
+    });
+
+    it("should return status code 404 if post doesn't exist", async done => {
+
+      url = `/api/posts/${utils.getRandomId()}`;
+
+      const res = await prepare();
+
+      expect(res.status).toBe(404);
+      expect(res.body).toHaveProperty("error");
+      done();
+    });
+
+    it('should return status code 404 if a post id is invalid', async done => {
+
+      dataTypes.forEach(async item => {
+        if (item !== "") {
+          url = `/api/posts/${item}`;
+
+          const res = await prepare();
+
+          expect(res.status).toBe(404);
+          expect(res.body).toHaveProperty("error");
+        }
+      });
+      done();
+    });
+
+    it("should return status code 201 if the post exists", async done => {
+
+      const res = await prepare();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty("_id");
+      expect(res.body).toHaveProperty("description", "description");
+      expect(res.body).toHaveProperty("year", car.year);
+      expect(res.body).toHaveProperty("mileage", 60000);
+      expect(res.body).toHaveProperty("price", 20000);
+      expect(res.body).toHaveProperty("date");
+      expect(res.body.isActive).toBeTruthy();
+      expect(res.body).toHaveProperty("transmission");
+      expect(res.body.images).toMatchObject([]);
+      expect(res.body.make).toMatchObject({"_id": String(make._id), "name": make.name});
+      expect(res.body.model).toMatchObject({"_id": String(model._id), "name": model.name});
+      expect(res.body.state).toMatchObject({"_id": String(state._id), "name": state.name});
+      expect(res.body.city).toMatchObject({"_id": String(city._id), "name": city.name});
+      expect(res.body.car).toMatchObject({
+        "_id": String(car._id),
+        "fuel": car.fuel,
+        "make": car.make,
+        "model": car.model,
+        "type": car.type,
+        "vin": car.vin,
+        "year": car.year
+      });
+      expect(res.body.author).toMatchObject({
+        "_id": String(user._id),
+        "email": user.email,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "phone": user.phone
+      });
+
+      done();
+    });
+  });
+
 });
