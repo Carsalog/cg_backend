@@ -5,6 +5,7 @@ const {State} = require("../models/states");
 const {City} = require("../models/cities");
 const _ = require("lodash");
 const controller = {};
+const {getZip} = require("../lib/utils");
 
 
 controller.get = async (req, res) => {
@@ -13,10 +14,15 @@ controller.get = async (req, res) => {
    * @return Promise:
    */
 
-  const zip = await Zip.findById(req.params.id);
+  let zip = await Zip.getByZip(req.params.id);
+
+  // Try to get zip code from google api
+  if (!zip) zip = await getZip(req.params.id);
+
+  // If zip doesn't exist return error
   if (!zip) return res.status(404).send({error: "Cannot find this zip code"});
 
-  return res.send(_.pick(zip, ["_id", "city", "state", "loc", "pop"]));
+  return res.send(_.pick(zip, ["_id", "city", "state", "loc"]));
 };
 
 
@@ -39,11 +45,10 @@ controller.post = async (req, res) => {
     _id: req.body._id,
     city: city._id,
     state: state._id,
-    loc: req.body.loc,
-    pop: req.body.pop
+    loc: req.body.loc
   }).save();
 
-  return res.send(_.pick(zip, ["_id", "state", "city", "loc", "pop"]));
+  return res.send(_.pick(zip, ["_id", "state", "city", "loc"]));
 };
 
 
@@ -62,7 +67,7 @@ controller.put = async (req, res) => {
   const item = await Zip.update(req.body, req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find this city"});
 
-  return res.send(_.pick(item, ["_id", "city", "state", "pop", "loc"]));
+  return res.send(_.pick(item, ["_id", "city", "state", "loc"]));
 };
 
 
@@ -76,7 +81,7 @@ controller.delete = async (req, res) => {
 
   if (!item) return res.status(404).send({error: "Cannot find this zip"});
 
-  return res.send(_.pick(item, ["_id", "city", "state", "pop", "loc"]));
+  return res.send(_.pick(item, ["_id", "city", "state", "loc"]));
 };
 
 
