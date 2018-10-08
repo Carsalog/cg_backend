@@ -21,6 +21,13 @@ const zip = new mongoose.Schema({
   }
 });
 
+zip.statics.getByZip = function (_id) {
+
+  return this.findById(_id)
+    .populate("state", ["name", "abbreviation"])
+    .populate("city", ["name"])
+};
+
 zip.statics.update = async function (data, _id) {
   /**
    * Update zip
