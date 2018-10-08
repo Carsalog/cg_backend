@@ -13,15 +13,11 @@ const zip = new mongoose.Schema({
   },
   city: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: String(config.get("states.tableName"))
+    ref: String(config.get("cities.tableName"))
   },
-  loc: [{
-    type: Number
-  }],
-  pop: {
-    type: Number,
-    min: config.get("zips.pop.min"),
-    max: config.get("zips.pop.max")
+  loc: {
+    lat: Number,
+    lng: Number
   }
 });
 
@@ -37,7 +33,6 @@ zip.statics.update = async function (data, _id) {
   item.city = data.city;
   item.state = data.state;
   item.loc = data.loc;
-  item.pop = data.pop;
 
   return item.save();
 };
@@ -54,7 +49,6 @@ exports.validate = function (obj) {
     _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
     city: Joi.objectId().required(),
     state: Joi.objectId().required(),
-    loc: Joi.array().items(Joi.number()).required(),
-    pop: Joi.number().integer().required()
+    loc: Joi.array().items(Joi.number()).required()
   });
 };
