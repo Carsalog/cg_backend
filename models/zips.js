@@ -22,6 +22,10 @@ const zip = new mongoose.Schema({
 });
 
 zip.statics.getByZip = function (_id) {
+  /**
+   * Return zip by zip code
+   * @return Promise:
+   */
 
   return this.findById(_id)
     .populate("state", ["name", "abbreviation"])
