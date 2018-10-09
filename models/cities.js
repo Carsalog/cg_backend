@@ -50,7 +50,7 @@ city.statics.getByName = function (name, _id) {
    *
    * @return Promise:
    */
-  return this.findOne({name: { "$regex": name, "$options": "i" }, state: _id}).select("-__v");
+  return this.findOne({name: name, state: _id}).select("-__v");
 };
 
 city.statics.update = async function (obj, _id) {
