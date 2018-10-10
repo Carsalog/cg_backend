@@ -51,7 +51,9 @@ state.statics.getByName = function (name) {
 };
 
 state.statics.getByAbbreviation = function (abbreviation) {
-
+  /**
+   * Return car type or none
+   */
   return this.findOne({abbreviation: abbreviation }).select("-__v");
 };
 
