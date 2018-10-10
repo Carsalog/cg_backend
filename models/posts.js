@@ -176,7 +176,7 @@ posts.statics.getByPage = function (page, amount, city, state, make, model, year
     .populate("make", "name")
     .populate("model", "-__v")
     .populate("transmission", "type")
-    .populate("state", "name")
+    .populate("state", ["name", "abbreviation"])
     .populate("city", "name")
     .populate("images", "url")
     .populate("author", "firstName lastName phone email")
