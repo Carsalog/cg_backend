@@ -50,6 +50,11 @@ state.statics.getByName = function (name) {
   return this.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
 };
 
+state.statics.getByAbbreviation = function (abbreviation) {
+
+  return this.findOne({abbreviation: abbreviation }).select("-__v");
+};
+
 state.statics.create = function (data) {
   /**
    * Create a new state
