@@ -18,6 +18,11 @@ router.get("/me", auth, async (req, res) => {
   return res.send(await User.getById(req.user._id));
 });
 
+router.get("/:email", async (req, res) => {
+
+  return res.send(Boolean(await User.getByEmail(req.params.email)));
+});
+
 router.post("/", [pwValidator, valid(validate)], async (req, res) => {
   /**
    * Create a new user and send user object to the client
