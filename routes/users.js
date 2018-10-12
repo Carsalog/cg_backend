@@ -19,7 +19,12 @@ router.get("/me", auth, async (req, res) => {
 });
 
 router.get("/:email", async (req, res) => {
-
+  /**
+   * Returns true if email registered, otherwise false
+   *
+   * @return Object:
+   */
+  
   return res.send(Boolean(await User.getByEmail(req.params.email)));
 });
 
