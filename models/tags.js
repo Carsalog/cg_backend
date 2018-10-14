@@ -14,7 +14,10 @@ const tag = new mongoose.Schema({
 });
 
 tag.statics.getById = function(_id) {
-
+  /**
+   * Get tag by id
+   * @return Object:
+   */
   return this.findById(_id).select("-__v");
 };
 
