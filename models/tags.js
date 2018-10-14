@@ -22,4 +22,9 @@ tag.statics.getById = function(_id) {
 };
 
 
+tag.statics.getByName = function (name) {
+
+  return this.findOne({name: name.toLowerCase(), }).select("-__v");
+};
+
 exports.Tag = mongoose.model(String(config.get("tags.tableName")), tag);
