@@ -23,7 +23,10 @@ tag.statics.getById = function(_id) {
 
 
 tag.statics.getByName = function (name) {
-
+  /**
+   * Get tag by name
+   * @return Object:
+   */
   return this.findOne({name: name.toLowerCase(), }).select("-__v");
 };
 
