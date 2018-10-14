@@ -13,4 +13,10 @@ const tag = new mongoose.Schema({
   }
 });
 
-export default mongoose.model(String(config.get("tags.tableName")), tag);
+tag.statics.getById = function(_id) {
+
+  return this.findById(_id).select("-__v");
+};
+
+
+exports.Tag = mongoose.model(String(config.get("tags.tableName")), tag);
