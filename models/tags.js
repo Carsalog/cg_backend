@@ -31,6 +31,10 @@ tag.statics.getByName = function (name) {
 };
 
 tag.statics.create = function (newTag) {
+  /**
+   * Create a new tag
+   * @return Object:
+   */
 
   return new this(newTag).save();
 };
