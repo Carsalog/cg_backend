@@ -30,4 +30,9 @@ tag.statics.getByName = function (name) {
   return this.findOne({name: name.toLowerCase(), }).select("-__v");
 };
 
+tag.statics.create = function (newTag) {
+
+  return new this(newTag).save();
+};
+
 exports.Tag = mongoose.model(String(config.get("tags.tableName")), tag);
