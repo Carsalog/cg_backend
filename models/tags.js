@@ -40,7 +40,11 @@ tag.statics.create = function (newTag) {
 };
 
 tag.statics.update = async function (obj, _id) {
-  
+  /**
+   * Update a tag
+   * @return Object:
+   */
+
   const current = await this.findById(_id);
   if (!current) return null;
 
