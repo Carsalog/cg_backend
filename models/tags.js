@@ -39,4 +39,14 @@ tag.statics.create = function (newTag) {
   return new this(newTag).save();
 };
 
+tag.statics.update = async function (obj, _id) {
+  
+  const current = await this.findById(_id);
+  if (!current) return null;
+
+  // Update and return a car type
+  current.name = obj.name;
+  return current.save();
+};
+
 exports.Tag = mongoose.model(String(config.get("tags.tableName")), tag);
