@@ -53,4 +53,10 @@ tag.statics.update = async function (obj, _id) {
   return current.save();
 };
 
+tag.statics.delById = function (_id) {
+
+  return this.findByIdAndRemove(_id);
+};
+
+
 exports.Tag = mongoose.model(String(config.get("tags.tableName")), tag);
