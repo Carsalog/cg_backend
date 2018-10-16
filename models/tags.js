@@ -54,7 +54,10 @@ tag.statics.update = async function (obj, _id) {
 };
 
 tag.statics.delById = function (_id) {
-
+  /**
+   * Remove a car type
+   * @return Object:
+   */
   return this.findByIdAndRemove(_id);
 };
 
