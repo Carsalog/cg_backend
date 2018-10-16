@@ -66,7 +66,11 @@ exports.Tag = mongoose.model(String(config.get("tags.tableName")), tag);
 
 
 exports.validate = function (tag) {
-
+  /**
+   * Validation
+   * @return Function:
+   * @type {{_id: *, name: *}}
+   */
   const schema = {
     _id: Joi.objectId(),
     name: Joi.string().min(config.get("tags.name.min")).max(config.get("tags.name.max")).required()
