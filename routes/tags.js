@@ -19,6 +19,10 @@ router.get("/", validator, async (req, res) => {
 });
 
 router.get("/:id", idValidator, async (req, res) => {
+  /**
+   * Get a tag by id
+   * @return Object:
+   */
 
   const item = await getById(req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find this tag"});
