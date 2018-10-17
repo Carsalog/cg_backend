@@ -10,6 +10,10 @@ const valid = require("../middleware/valid");
 
 
 router.get("/", validator, async (req, res) => {
+  /**
+   * Get amount of tags by page
+   * @return Object:
+   */
 
   res.send(await Tag.getByPage(req.params.page, req.params.amount))
 });
