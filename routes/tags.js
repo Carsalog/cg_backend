@@ -18,4 +18,12 @@ router.get("/", validator, async (req, res) => {
   res.send(await Tag.getByPage(req.params.page, req.params.amount))
 });
 
+router.get("/:id", idValidator, async (req, res) => {
+
+  const item = await getById(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this tag"});
+
+  return res.send(item);
+});
+
 module.exports = router;
