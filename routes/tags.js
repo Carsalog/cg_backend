@@ -44,4 +44,12 @@ router.post("/", [auth, valid(validate)], async (req, res) => {
   return res.status(201).send(_.pick(await Tag.create(req.body), ["_id", "name"]));
 });
 
+router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) => {
+
+  const tag = await Tag.update(req.body, req.params.id);
+  if (!tag) return res.status(404).send({error: "Cannot find the tag"});
+
+  return res.send(_.pick(tag, ["_id", "name"]));
+});
+
 module.exports = router;
