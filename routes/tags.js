@@ -57,6 +57,10 @@ router.put('/:id', [auth, su, idValidator, valid(validate)], async (req, res) =>
 });
 
 router.delete("/:id", [auth, su, idValidator], async (req, res) => {
+  /**
+   * Remove a tag
+   * @return Object:
+   */
 
   const tag = await Tag.delById(req.params.id);
   if (!tag) return res.status(404).send({error: "Cannot find this tag"});
