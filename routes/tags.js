@@ -9,4 +9,9 @@ const idValidator = require("../middleware/idValidator");
 const valid = require("../middleware/valid");
 
 
+router.get("/", validator, async (req, res) => {
+
+  res.send(await Tag.getByPage(req.params.page, req.params.amount))
+});
+
 module.exports = router;
