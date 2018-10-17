@@ -31,6 +31,10 @@ router.get("/:id", idValidator, async (req, res) => {
 });
 
 router.post("/", [auth, valid(validate)], async (req, res) => {
+  /**
+   * Create a new tag
+   * @return Object:
+   */
 
   // Make sure that name is free, if taken send back to client this item
   const item = await getByName(req.body.name);
