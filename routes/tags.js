@@ -30,4 +30,14 @@ router.get("/:id", idValidator, async (req, res) => {
   return res.send(item);
 });
 
+router.post("/", [auth, valid(validate)], async (req, res) => {
+
+  // Make sure that name is free, if taken send back to client this item
+  const item = await getByName(req.body.name);
+  if (item) return res.status(200).send(item);
+
+  // Create an object and send it to client
+  return res.status(201).send(_.pick(await Tag.create(req.body), ["_id", "name"]));
+});
+
 module.exports = router;
