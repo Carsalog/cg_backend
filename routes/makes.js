@@ -17,6 +17,20 @@ router.get("/", validator, async (req, res) => {
   res.send(await Make.getByPage(req.params.page, req.params.amount).populate("models", "name"));
 });
 
+
+router.get("/:id", idValidator, async (req, res) => {
+  /**
+   * Get make by id and send it to a client
+   * @return Object:
+   */
+  const item = await Make.getById(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find the make"});
+
+  // Send response to a client
+  return res.send(item);
+});
+
+
 router.post("/", [auth, su, valid(validate)], async (req, res) => {
   /**
    * Create a new car make
@@ -56,16 +70,6 @@ router.delete("/:id", [auth, su, idValidator], async (req, res) => {
   return res.send({info: `Make ${item.name} was removed`});
 });
 
-router.get("/:id", idValidator, async (req, res) => {
-  /**
-   * Get make by id and send it to a client
-   * @return Object:
-   */
-  const item = await Make.getById(req.params.id);
-  if (!item) return res.status(404).send({error: "Cannot find the make"});
 
-  // Send response to a client
-  return res.send(item);
-});
 
 module.exports = router;
