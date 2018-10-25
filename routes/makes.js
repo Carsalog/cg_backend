@@ -9,12 +9,24 @@ const _ = require("lodash");
 const valid = require("../middleware/valid");
 
 
-router.get("/", validator, async (req, res) => {
+router.get("/", async (req, res) => {
   /**
    * Get amount of car makes by page
    * @return Object:
    */
   res.send(await Make.getByPage(req.params.page, req.params.amount).populate("models", "name"));
+});
+
+
+router.get("/by/name/:name", async (req, res) => {
+
+  const { error } = validator(req.params.name);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  const item = await Make.getByName(req.params.name);
+  if (!item) return res.status(404).send({error: "Cannot find the make"});
+
+  return res.send(item);
 });
 
 
