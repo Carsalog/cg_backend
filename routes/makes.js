@@ -19,7 +19,11 @@ router.get("/", async (req, res) => {
 
 
 router.get("/by/name/:name", async (req, res) => {
-
+  /**
+   * Get make by name and send it to a client
+   * @return Object:
+   */
+  
   const { error } = validator(req.params.name);
   if (error) return res.status(400).send({error: error.details[0].message});
 
