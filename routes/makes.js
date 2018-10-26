@@ -1,9 +1,8 @@
 const express = require("express");
-const {Make, validate} = require("../models/makes");
+const {Make, validate, validateName} = require("../models/makes");
 const router = express.Router();
 const auth = require("../middleware/authentication");
 const su = require("../middleware/admin");
-const validator = require("../middleware/validator");
 const idValidator = require("../middleware/idValidator");
 const _ = require("lodash");
 const valid = require("../middleware/valid");
@@ -23,8 +22,8 @@ router.get("/by/name/:name", async (req, res) => {
    * Get make by name and send it to a client
    * @return Object:
    */
-  
-  const { error } = validator(req.params.name);
+
+  const { error } = validateName({name: req.params.name});
   if (error) return res.status(400).send({error: error.details[0].message});
 
   const item = await Make.getByName(req.params.name);
