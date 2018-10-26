@@ -37,7 +37,8 @@ makeSchema.statics.getByName = function (name) {
   /**
    * Return car type or none
    */
-  return this.findOne({name: { "$regex": name, "$options": "i" }}).select("-__v");
+  return this.findOne({name: { "$regex": name, "$options": "i" }})
+    .populate("models", "name").select("-__v");
 };
 
 makeSchema.statics.create = function (name) {
@@ -88,5 +89,14 @@ function validate(object) {
   return Joi.validate(object, schema);
 }
 
+function validateName(object) {
+
+  const schema = {
+    name: Joi.string().min(config.get("makes.name.min")).max(config.get("makes.name.max")).required(),
+  };
+  return Joi.validate(object, schema);
+}
+
 exports.Make = Make;
 exports.validate = validate;
+exports.validateName = validateName;
