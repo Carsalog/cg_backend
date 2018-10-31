@@ -18,6 +18,19 @@ router.get("/", validator, async (req, res) => {
   res.send(await Tag.getByPage(req.params.page, req.params.amount))
 });
 
+router.get("/by/name/:name", async (req, res) => {
+
+  const tag = {name: req.params.name};
+
+  const { error } = validate(tag);
+  if (error) return res.status(400).send({error: error.details[0].message});
+
+  let item = await Tag.getByName(req.params.name);
+  if (!item) item = await Tag.create(tag);
+
+  return res.send(item);
+});
+
 router.get("/:id", idValidator, async (req, res) => {
   /**
    * Get a tag by id
