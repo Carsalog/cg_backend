@@ -19,6 +19,10 @@ router.get("/", validator, async (req, res) => {
 });
 
 router.get("/by/name/:name", async (req, res) => {
+  /**
+   * Get a tag by id
+   * @return Object:
+   */
 
   const tag = {name: req.params.name};
 
