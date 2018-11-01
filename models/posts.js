@@ -129,6 +129,11 @@ posts.statics.getById = function (_id) {
 };
 
 posts.statics.getPostsByUserId = async function (_id) {
+  /**
+   * It returns user posts
+   * @return Promise:
+   */
+
   return this.find({author: _id})
     .populate("car", "vin make model fuel type year")
     .populate("tags", "name")
