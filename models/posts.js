@@ -4,8 +4,7 @@ const config = require("config");
 const {getCurrentYear} = require("../lib/tools");
 const currentYear = getCurrentYear();
 
-
-const posts = new mongoose.Schema({
+const schema = {
   description: {
     type: String,
     min: config.get("posts.description.min"),
@@ -82,7 +81,9 @@ const posts = new mongoose.Schema({
     max: config.get("posts.price.max"),
     required: true
   }
-});
+};
+
+const posts = new mongoose.Schema(schema);
 
 
 posts.statics.create = async function (data) {
@@ -127,7 +128,7 @@ posts.statics.getById = function (_id) {
     .select("-__v");
 };
 
-posts.statics.addTsg = async function (_id, tag) {
+posts.statics.addTag = async function (_id, tag) {
   /**
    * Add a tag to the post object
    * @return Promise:
@@ -192,14 +193,14 @@ posts.statics.update = async function (obj, _id) {
 
   const item = await this.findById(_id);
 
-  if (obj.isActive === false || obj.isActive === true) item.isActive = obj.isActive;
-
+  item.isActive = obj.isActive;
   item.description = obj.description;
   item.transmission = obj.transmission;
   item.state = obj.state;
   item.city = obj.city;
   item.mileage = obj.mileage;
   item.price = obj.price;
+  item.tags = obj.tags;
 
   return item.save();
 };
@@ -284,3 +285,5 @@ exports.validatePUT = function (obj) {
   };
   return Joi.validate(obj, schema);
 };
+
+exports.schema = schema;
