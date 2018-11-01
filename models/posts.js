@@ -128,6 +128,20 @@ posts.statics.getById = function (_id) {
     .select("-__v");
 };
 
+posts.statics.getPostsByUserId = async function (_id) {
+  return this.find({author: _id})
+    .populate("car", "vin make model fuel type year")
+    .populate("tags", "name")
+    .populate("transmission", "type")
+    .populate("state", "name")
+    .populate("city", "name")
+    .populate("make", "name")
+    .populate("model", "name")
+    .populate("images", "url")
+    .populate("author", "firstName lastName phone email")
+    .select("-__v");
+};
+
 posts.statics.addTag = async function (_id, tag) {
   /**
    * Add a tag to the post object
