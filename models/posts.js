@@ -128,7 +128,7 @@ posts.statics.getById = function (_id) {
     .select("-__v");
 };
 
-posts.statics.getPostsByUserId = async function (_id) {
+ posts.statics.getPostsByUserId = async function (_id) {
   /**
    * It returns user posts
    * @return Promise:
@@ -224,6 +224,34 @@ posts.statics.update = async function (obj, _id) {
   return item.save();
 };
 
+posts.statics.patch = async function (obj, _id) {
+
+  const item = await this.findById(_id);
+
+  if (obj.isActive) item.isActive = obj.isActive;
+  if (obj.description) item.description = obj.description;
+  if (obj.transmission) item.transmission = obj.transmission;
+  if (obj.state) item.state = obj.state;
+  if (obj.city) item.city = obj.city;
+  if (obj.mileage) item.mileage = obj.mileage;
+  if (obj.price) item.price = obj.price;
+  if (obj.tags) item.tags = obj.tags;
+
+  await item.save();
+
+  return this.findById(_id)
+    .populate("car", "-__v")
+    .populate("tags", "name")
+    .populate("make", "name")
+    .populate("model", "-__v")
+    .populate("transmission", "type")
+    .populate("state", ["name", "abbreviation"])
+    .populate("city", "name")
+    .populate("images", "url")
+    .populate("author", "firstName lastName phone email")
+    .select("-__v");
+};
+
 posts.statics.delById = async function (_id) {
   /**
    * Remove post by id
@@ -301,6 +329,32 @@ exports.validatePUT = function (obj) {
       .min(config.get("posts.price.min"))
       .max(config.get("posts.price.max"))
       .required()
+  };
+  return Joi.validate(obj, schema);
+};
+
+exports.validatePATCH = function (obj) {
+  /**
+   * Validate post for patch query object if it invalid return error message
+   * @return Object:
+   */
+
+  const schema = {
+    _id: Joi.objectId(),
+    description: Joi.string()
+      .min(config.get("posts.description.min"))
+      .max(config.get("posts.description.max")),
+    state: Joi.objectId(),
+    city: Joi.objectId(),
+    tags: Joi.array().items(Joi.objectId()),
+    transmission: Joi.objectId(),
+    isActive: Joi.boolean(),
+    mileage: Joi.number()
+      .min(config.get("posts.mileage.min"))
+      .max(config.get("posts.mileage.max")),
+    price: Joi.number().integer()
+      .min(config.get("posts.price.min"))
+      .max(config.get("posts.price.max"))
   };
   return Joi.validate(obj, schema);
 };
