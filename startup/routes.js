@@ -34,7 +34,6 @@ module.exports = function (app) {
   app.use('/api/images', images);
   app.use('/api/tags', tags);
   app.use('/api/models', models);
-  app.use('/api/types', types);
   app.use('/api/makes', makes);
   app.use('/api/posts', posts);
   app.use('/api/zips', zips);
