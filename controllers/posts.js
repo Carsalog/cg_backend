@@ -82,6 +82,10 @@ controller.put = async (req, res) => {
 
 
 controller.patch = async (req, res) => {
+  /**
+   * Patch a post
+   * @return Object:
+   */
 
   const post = await Post.getById(req.params.id);
 
