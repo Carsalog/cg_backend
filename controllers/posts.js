@@ -39,7 +39,7 @@ controller.get = async (req, res) => {
 
 controller.getByUserId = async (req, res) => {
   /**
-   * Get make by id and send it to a client
+   * Get post by id and send it to a client
    * @return Object:
    */
 
@@ -49,6 +49,10 @@ controller.getByUserId = async (req, res) => {
 
 
 controller.getById = async (req, res) => {
+  /**
+   * Get post by id and send it to a client
+   * @return Object:
+   */
 
   const item = await Post.getById(req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find this post"});
