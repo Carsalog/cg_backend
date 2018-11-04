@@ -225,6 +225,10 @@ posts.statics.update = async function (obj, _id) {
 };
 
 posts.statics.patch = async function (obj, _id) {
+  /**
+   * Update post and return post object
+   * @return Promise:
+   */
 
   const item = await this.findById(_id);
 
