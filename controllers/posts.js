@@ -1,4 +1,4 @@
-const {Post} = require("../models/posts");
+const {Post, schema} = require("../models/posts");
 const {User} = require("../models/users");
 const {State} = require("../models/states");
 const {City} = require("../models/cities");
@@ -6,7 +6,7 @@ const {Make} = require("../models/makes");
 const {Model} = require("../models/models");
 const _ = require("lodash");
 const controller = {};
-
+const keys = [..._.keys(schema), "_id"];
 
 controller.get = async (req, res) => {
   /**
@@ -37,16 +37,14 @@ controller.get = async (req, res) => {
 };
 
 
-controller.getById = async (req, res) => {
+controller.getByUserId = async (req, res) => {
   /**
    * Get make by id and send it to a client
    * @return Object:
    */
 
-  const item = await Post.getById(req.params.id);
-  if (!item) return res.status(404).send({error: "Cannot find this post"});
 
-  return res.send(item);
+  return res.send(await Post.getPostsByUserId(req.params.id));
 };
 
 
@@ -56,7 +54,7 @@ controller.post = async (req, res) => {
    * @return Object:
    */
 
-  return res.status(201).send(_.pull(await Post.create(req.body), ["-__v"]));
+  return res.status(201).send(_.pick(await Post.create(req.body), keys));
 };
 
 
@@ -66,7 +64,7 @@ controller.put = async (req, res) => {
    * @return Object:
    */
 
-  return res.send(await Post.update(req.body, req.params.id));
+  return res.send(_.pick(await Post.update(req.body, req.params.id), keys));
 };
 
 
@@ -84,7 +82,7 @@ controller.delete = async (req, res) => {
   if (!item) return res.status(404).send({error: "Cannot find this post"});
 
   // If user isn't author and isn't admin return error message
-  if (!user.su && user._id !== item.author._id)
+  if (!user.su && String(user._id) !== String(item.author._id))
     return res.status(403).send({error: "You cannot remove this post"});
 
   await item.remove();
