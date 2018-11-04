@@ -81,6 +81,20 @@ controller.put = async (req, res) => {
 };
 
 
+controller.patch = async (req, res) => {
+
+  const post = await Post.getById(req.params.id);
+
+  const user = await User.getById(req.user._id);
+  if (!user) return res.status(404).send({error: "Cannot find this user"});
+
+  if (!user.su && String(user._id) !== String(post.author._id))
+    return res.status(403).send({error: "You cannot edit this post"});
+
+  return res.send(_.pick(await Post.patch(req.body, req.params.id), keys));
+};
+
+
 controller.delete = async (req, res) => {
   /**
    * Remove a post
