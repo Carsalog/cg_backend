@@ -48,6 +48,15 @@ controller.getByUserId = async (req, res) => {
 };
 
 
+controller.getById = async (req, res) => {
+
+  const item = await Post.getById(req.params.id);
+  if (!item) return res.status(404).send({error: "Cannot find this post"});
+
+  return res.send(item);
+};
+
+
 controller.post = async (req, res) => {
   /**
    * Create a new post
