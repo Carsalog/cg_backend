@@ -44,9 +44,6 @@ const user = new mongoose.Schema({
   }
 });
 
-user.statics.getById = function (_id) {
-  return this.findById(_id);
-};
 
 user.methods.generateAuthToken = function () {
   /**
@@ -92,7 +89,7 @@ user.statics.create = async function (user) {
   }).save();
 };
 
-user.statics.update = async function (_id, user) {
+user.statics.update = async function (_id, usr) {
   /**
    * Update user if user existing else return null
    *
@@ -103,11 +100,14 @@ user.statics.update = async function (_id, user) {
 
   if (!_user) return null;
 
-  _user.firstName = user.firstName;
-  _user.lastName = user.lastName;
-  _user.phone = user.phone;
-  _user.password = await hash(user.password);
-  return await _user.save();
+  _user.firstName = usr.firstName;
+  _user.lastName = usr.lastName;
+  _user.phone = usr.phone;
+  _user.email = usr.email;
+  _user.password = await hash(usr.password);
+
+  await _user.save();
+  return this.findById(_id);
 };
 
 user.statics.delById = function (objectId) {
