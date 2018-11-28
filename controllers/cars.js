@@ -2,6 +2,8 @@ const {Car, validateVIN} = require("../models/cars");
 const nhtsa = require('nhtsa');
 const _ = require("lodash");
 const controller = {};
+const {Make} = require("../models/makes");
+const {Model} = require("../models/models");
 
 
 controller.get = async (req, res) => {
@@ -49,6 +51,16 @@ controller.getByVIN = async (req, res) => {
       // Retrieve data
       if (!data.Results[0]) return res.status(500).send({error: "Server unavailable, try it later"});
       const info = data.Results[0];
+
+      // Create a make if it doesn't exist
+      if (!(await Make.getByName(info.Make))) {
+        const make = await Make.create({name: info.Make});
+        const model = await Model.create({make: make._id, name: info.Model});
+
+        // update make
+        make.models.push(model._id);
+        await make.save();
+      }
 
       // Create a new car
       await Car.create({
