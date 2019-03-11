@@ -3,7 +3,10 @@ const Joi = require("joi");
 
 
 function validate(parameters) {
-
+  /**
+   * Validation of get params
+   * @type {{page: *, amount: *}}
+   */
   return Joi.validate(parameters, {
     page: Joi.number().integer().min(1).max(99999),
     amount: Joi.number().integer().min(1).max(250)
@@ -11,6 +14,12 @@ function validate(parameters) {
 }
 
 module.exports = function (req, res, next) {
+  /**
+   * Validate GET parameters, if parameters do not pass
+   * create parameters with default values or return error
+   * message. Then Add to request new parameters, and pass
+   * control to next middleware function.
+   */
 
   // Validate GET parameters
   const {error} = validate(req.query);
