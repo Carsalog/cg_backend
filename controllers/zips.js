@@ -32,7 +32,7 @@ controller.post = async (req, res) => {
    * @return Promise:
    */
 
-  const { error } = validate(req.body);
+  const {error} = validate(req.body);
   if (error) return res.status(400).send({error: error.details[0].message});
 
   const state = await State.getByName(req.body.state);
@@ -92,11 +92,16 @@ function validate(obj) {
    */
 
   return Joi.validate(obj, {
-    _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
+    _id: Joi.number().integer()
+      .min(config.get("zips.id.min"))
+      .max(config.get("zips.id.max"))
+      .required(),
     city: Joi.string().required(),
     state: Joi.string().required(),
-    loc: Joi.array().items(Joi.number()).required(),
-    pop: Joi.number().integer().required()
+    loc: Joi.object().keys({
+      lat: Joi.number().required(),
+      lng: Joi.number().required()
+    }).required()
   });
 }
 
