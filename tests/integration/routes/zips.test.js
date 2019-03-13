@@ -5,7 +5,7 @@ const request = require("supertest");
 const server = require("../../../loader");
 const utils = require("./utils");
 
-
+jest.setTimeout(15000);
 describe("/api/zips", () => {
   /**
    * Test cases for /api/zips endpoint
@@ -52,7 +52,8 @@ describe("/api/zips", () => {
         city: city._id,
         state: state._id,
         pop: 3857,
-        loc : [ -97.742559, 30.271289 ]};
+        loc: {lat: -97.742559, lng: 30.271289}
+      };
       zip = await new Zip(data).save();
       done();
     });
@@ -96,11 +97,9 @@ describe("/api/zips", () => {
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("_id", zip._id);
-      expect(res.body).toHaveProperty("city", String(zip.city));
-      expect(res.body).toHaveProperty("state", String(zip.state));
+      expect(res.body).toHaveProperty("city");
+      expect(res.body).toHaveProperty("state");
       expect(res.body).toHaveProperty("loc");
-      expect(res.body.loc.length === 2).toBeTruthy();
-      expect(res.body).toHaveProperty("pop", zip.pop);
       done();
     });
   });
@@ -122,8 +121,8 @@ describe("/api/zips", () => {
         _id: 78701,
         city: city.name,
         state: state.name,
-        pop: 3857,
-        loc : [ -97.742559, 30.271289 ]};
+        loc: {lat: -97.742559, lng: 30.271289}
+      };
       url = "/api/zips";
       done();
     });
@@ -151,7 +150,7 @@ describe("/api/zips", () => {
 
     it("should return status code 400 if post data loc have more than 2 coordinates", async done => {
 
-      postData.loc.push(100.001);
+      postData.loc.x = 12;
 
       const res = await prepare();
 
@@ -163,7 +162,7 @@ describe("/api/zips", () => {
 
     it("should return status code 400 if post data loc have less than 2 coordinates", async done => {
 
-      postData.loc.pop();
+      delete postData.loc.lat;
 
       const res = await prepare();
 
@@ -203,47 +202,19 @@ describe("/api/zips", () => {
 
       dataTypes.forEach(async item => {
 
-        postData.loc[0] = item;
+        postData.loc.lat = item;
 
         const res = await prepare();
 
         expect(res.status).toBe(400);
         expect(res.body).toHaveProperty("error");
 
-        postData.loc[1] = item;
+        postData.loc.lng = item;
 
         const res2 = await prepare();
 
         expect(res2.status).toBe(400);
         expect(res2.body).toHaveProperty("error");
-      });
-
-      done();
-    });
-
-    it("should return status code 400 if post data doesn't have pop", async done => {
-
-      delete postData.pop;
-
-      const res = await prepare();
-
-      expect(res.status).toBe(400);
-      expect(res.body).toHaveProperty("error");
-
-      done();
-    });
-
-    it("should return status code 400 if population is invalid", async done => {
-
-      dataTypes.forEach(async item => {
-        if (item !== 0) {
-          postData.pop = item;
-
-          const res = await prepare();
-
-          expect(res.status).toBe(400);
-          expect(res.body).toHaveProperty("error");
-        }
       });
 
       done();
@@ -307,9 +278,8 @@ describe("/api/zips", () => {
       expect(res.body).toHaveProperty("state", String(state._id));
       expect(res.body).toHaveProperty("pop", postData.pop);
       expect(res.body).toHaveProperty("loc");
-      expect(res.body.loc.length === 2).toBeTruthy();
-      expect(res.body.loc[0] === postData.loc[0]).toBeTruthy();
-      expect(res.body.loc[1] === postData.loc[1]).toBeTruthy();
+      expect(res.body.loc.lat === postData.loc.lat).toBeTruthy();
+      expect(res.body.loc.lng === postData.loc.lng).toBeTruthy();
 
       done();
     });
@@ -339,15 +309,15 @@ describe("/api/zips", () => {
         _id: 78701,
         city: city2._id,
         state: state2._id,
-        pop: 5801,
-        loc : [ -122.330456, 47.611435 ]}).save();
+        loc: {lat: -122.330456, lng: 47.611435}
+      }).save();
 
       data = {
         _id: 78701,
         city: city._id,
         state: state._id,
-        pop: 3857,
-        loc : [ -97.742559, 30.271289 ]};
+        loc: {lat: -97.742559, lng: 30.271289}
+      };
 
       url = `/api/zips/${zip._id}`;
       done();
@@ -465,23 +435,6 @@ describe("/api/zips", () => {
       done();
     });
 
-    it("should return status code 400 if population is invalid", async done => {
-
-      dataTypes.forEach(async item => {
-
-        if (item !== 0) {
-          data.pop = item;
-
-          const res = await prepare();
-
-          expect(res.status).toBe(400);
-          expect(res.body).toHaveProperty("error");
-        }
-      });
-
-      done();
-    });
-
     it("should return status code 400 if location is invalid", async done => {
 
       dataTypes.forEach(async item => {
@@ -502,7 +455,7 @@ describe("/api/zips", () => {
       dataTypes.forEach(async item => {
 
         if (item !== 0) {
-          data.loc[0] = item;
+          data.loc.lat = item;
 
           const res = await prepare();
 
@@ -537,9 +490,7 @@ describe("/api/zips", () => {
       expect(res.body).toHaveProperty("_id", zip._id);
       expect(res.body).toHaveProperty("city", String(data.city));
       expect(res.body).toHaveProperty("state", String(data.state));
-      expect(res.body).toHaveProperty("pop", data.pop);
       expect(res.body).toHaveProperty("loc");
-      expect(res.body.loc.length === 2).toBeTruthy();
       done();
     });
   });
@@ -558,7 +509,8 @@ describe("/api/zips", () => {
         city: city._id,
         state: state._id,
         pop: 3857,
-        loc : [ -97.742559, 30.271289 ]}).save();
+        loc: {lat: -122.330456, lng: 47.611435}
+      }).save();
 
       url = `/api/zips/${zip._id}`;
       done();
