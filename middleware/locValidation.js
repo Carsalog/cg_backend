@@ -7,8 +7,11 @@ module.exports = function (req, res, next) {
 
   const loc = req.body.loc;
 
-  if (!loc || loc.length !== 2) return res.status(400).send({error: "ZIP should have 2 coordinates"});
-  if (!isFloat(loc[0]) || !isFloat(loc[1])) return res.status(400).send({error: "Coordinates should be an integer"});
+  if (!loc) return res.status(400).send({error: "ZIP should have 2 coordinates"});
+  if (!loc.lat) return res.status(400).send({error: "ZIP should have a latitude"});
+  if (!loc.lng) return res.status(400).send({error: "ZIP should have a longitude"});
+  if (!isFloat(loc.lat) || !isFloat(loc.lng))
+    return res.status(400).send({error: "Coordinates should be an integer"});
 
   next();
 };
