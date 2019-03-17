@@ -57,9 +57,15 @@ exports.validate = function (obj) {
    */
 
   return Joi.validate(obj, {
-    _id: Joi.number().integer().min(config.get("zips.id.min")).max(config.get("zips.id.max")).required(),
+    _id: Joi.number().integer()
+      .min(config.get("zips.id.min"))
+      .max(config.get("zips.id.max"))
+      .required(),
     city: Joi.objectId().required(),
     state: Joi.objectId().required(),
-    loc: Joi.array().items(Joi.number()).required()
+    loc: Joi.object().keys({
+      lat: Joi.number().required(),
+      lng: Joi.number().required()
+    }).required()
   });
 };
