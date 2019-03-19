@@ -85,6 +85,17 @@ const schema = {
 
 const posts = new mongoose.Schema(schema);
 
+const populatePost = post => post
+  .populate("car", "vin make model fuel type year")
+  .populate("tags", "name")
+  .populate("transmission", "type")
+  .populate("state", "name")
+  .populate("city", "name")
+  .populate("make", "name")
+  .populate("model", "name")
+  .populate("images", "url")
+  .populate("author", "firstName lastName phone email");
+
 
 posts.statics.create = async function (data) {
   /**
@@ -98,15 +109,7 @@ posts.statics.create = async function (data) {
 
   if (item._id === undefined) return null;
 
-  return this.findById(item._id)
-    .populate("transmission", "type")
-    .populate("car", "vin make model fuel type year")
-    .populate("state", "name")
-    .populate("city", "name")
-    .populate("make", "name")
-    .populate("model", "name")
-    .populate("transmission", "type")
-    .populate("author", "firstName lastName phone email")
+  return populatePost(this.findById(item._id));
 };
 
 posts.statics.getById = function (_id) {
@@ -115,36 +118,21 @@ posts.statics.getById = function (_id) {
    * @return Promise:
    */
 
-  return this.findById(_id)
-    .populate("car", "vin make model fuel type year")
-    .populate("tags", "name")
-    .populate("transmission", "type")
-    .populate("state", "name")
-    .populate("city", "name")
-    .populate("make", "name")
-    .populate("model", "name")
-    .populate("images", "url")
-    .populate("author", "firstName lastName phone email")
-    .select("-__v");
+  return populatePost(this.findById(_id));
 };
 
- posts.statics.getPostsByUserId = async function (_id) {
+posts.statics.getByTags = function (tags) {
+  return populatePost(this.find({tags: {$all: tags}}))
+    .limit(config.get("itemsByPage"));
+};
+
+posts.statics.getPostsByUserId = function (_id) {
   /**
    * It returns user posts
    * @return Promise:
    */
 
-  return this.find({author: _id})
-    .populate("car", "vin make model fuel type year")
-    .populate("tags", "name")
-    .populate("transmission", "type")
-    .populate("state", "name")
-    .populate("city", "name")
-    .populate("make", "name")
-    .populate("model", "name")
-    .populate("images", "url")
-    .populate("author", "firstName lastName phone email")
-    .select("-__v");
+  return populatePost(this.find({author: _id}))
 };
 
 posts.statics.addTag = async function (_id, tag) {
@@ -164,15 +152,7 @@ posts.statics.getByVIN = function (vin) {
    * @return Object:
    */
 
-  return this.findOne({vin: vin})
-    .populate("car", "vin make model fuel type")
-    .populate("tags", "name")
-    .populate("transmission", "type")
-    .populate("state", "name")
-    .populate("city", "name")
-    .populate("images", "url")
-    .populate("author", "firstName lastName phone email")
-    .select("-__v");
+  return populatePost(this.findOne({vin: vin}));
 };
 
 posts.statics.getByPage = function (page, amount, city, state, make, model, yearMin, yearMax) {
@@ -189,18 +169,8 @@ posts.statics.getByPage = function (page, amount, city, state, make, model, year
   if (yearMin) data.year.$gte = yearMin;
   if (yearMax) data.year.$lte = yearMax;
 
-  return this.find(data)
+  return populatePost(this.find(data))
     .skip((page - 1) * amount)
-    .populate("car", "-__v")
-    .populate("tags", "name")
-    .populate("make", "name")
-    .populate("model", "-__v")
-    .populate("transmission", "type")
-    .populate("state", ["name", "abbreviation"])
-    .populate("city", "name")
-    .populate("images", "url")
-    .populate("author", "firstName lastName phone email")
-    .select("-__v")
     .limit(amount);
 };
 
@@ -243,17 +213,7 @@ posts.statics.patch = async function (obj, _id) {
 
   await item.save();
 
-  return this.findById(_id)
-    .populate("car", "-__v")
-    .populate("tags", "name")
-    .populate("make", "name")
-    .populate("model", "-__v")
-    .populate("transmission", "type")
-    .populate("state", ["name", "abbreviation"])
-    .populate("city", "name")
-    .populate("images", "url")
-    .populate("author", "firstName lastName phone email")
-    .select("-__v");
+  return populatePost(this.findById(_id));
 };
 
 posts.statics.delById = async function (_id) {
