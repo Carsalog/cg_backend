@@ -4,19 +4,9 @@ const router = express.Router();
 const auth = require("../middleware/authentication");
 const su = require("../middleware/admin");
 const _ = require("lodash");
-const validator = require("../middleware/validator");
 const idValidator = require("../middleware/idValidator");
 const valid = require("../middleware/valid");
 
-
-router.get("/", validator, async (req, res) => {
-  /**
-   * Get amount of tags by page
-   * @return Object:
-   */
-
-  res.send(await Tag.getByPage(req.params.page, req.params.amount))
-});
 
 router.get("/by/name/:name", async (req, res) => {
   /**
@@ -26,7 +16,7 @@ router.get("/by/name/:name", async (req, res) => {
 
   const tag = {name: req.params.name};
 
-  const { error } = validate(tag);
+  const {error} = validate(tag);
   if (error) return res.status(400).send({error: error.details[0].message});
 
   let item = await Tag.getByName(req.params.name);
@@ -53,7 +43,7 @@ router.post("/", [auth, valid(validate)], async (req, res) => {
    * @return Object:
    */
 
-  // Make sure that name is free, if taken send back to client this item
+    // Make sure that name is free, if taken send back to client this item
   const item = await getByName(req.body.name);
   if (item) return res.status(200).send(item);
 
