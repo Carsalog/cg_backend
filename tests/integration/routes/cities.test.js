@@ -140,7 +140,7 @@ describe("/api/cities", () => {
        *    generate: url
        * @type {string}
        */
-      name = "model";
+      name = "test_city_one";
 
       state = await State({name: "state1", abbreviation: "ST"}).save();
       city = await City({name: name, state: state._id}).save();
