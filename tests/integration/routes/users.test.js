@@ -199,15 +199,12 @@ describe("/api/users", () => {
       done();
     });
 
-    it("should return user object if user data is valid", async (done) => {
+    it("should return token if user data is valid", async (done) => {
 
       const res = await prepare();
 
-      expect(res.body.firstName).toBe(usr.firstName);
-      expect(res.body.lastName).toBe(usr.lastName);
-      expect(res.body.email).toBe(usr.email);
-      expect(res.body.phone).toBe(usr.phone);
-      expect(res.body.su).toBe(false);
+      expect(res.body).toHaveProperty("token");
+      expect(res.body.token.length > 10).toBeTruthy();
       done();
     });
   });
