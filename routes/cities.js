@@ -11,7 +11,7 @@ const valid = require("../middleware/valid");
 
 router.get("/by/state/:id", idValidator, async (req, res) => {
   /**
-   * Get amount of cities by page
+   * Get cities by page
    * @return Promise:
    */
   const state = await State.getById(req.params.id);
