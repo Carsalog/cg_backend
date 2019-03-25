@@ -63,8 +63,8 @@ describe("/api/cities", () => {
        */
       state = await State({name: "state1", abbreviation: "ST"}).save();
 
-      city1 = await City({name: "city1", state: state._id}).save();
-      city2 = await City({name: "city2", state: state._id}).save();
+      city1 = await City({name: "city1_test", state: state._id}).save();
+      city2 = await City({name: "city2_test", state: state._id}).save();
 
       state.cities.push(city1._id);
       state.cities.push(city2._id);
