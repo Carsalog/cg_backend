@@ -93,7 +93,7 @@ describe("/api/states", () => {
        * Before each test define name, create state
        * @type {string}
        */
-      name = "state";
+      name = "TEST state one";
       state = await State({name: name, abbreviation: "ST"}).save();
       done();
     });
