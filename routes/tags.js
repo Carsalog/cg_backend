@@ -31,7 +31,7 @@ router.get("/:id", idValidator, async (req, res) => {
    * @return Object:
    */
 
-  const item = await getById(req.params.id);
+  const item = await Tag.getById(req.params.id);
   if (!item) return res.status(404).send({error: "Cannot find this tag"});
 
   return res.send(item);
@@ -44,7 +44,7 @@ router.post("/", [auth, valid(validate)], async (req, res) => {
    */
 
     // Make sure that name is free, if taken send back to client this item
-  const item = await getByName(req.body.name);
+  const item = await Tag.getByName(req.body.name);
   if (item) return res.status(200).send(item);
 
   // Create an object and send it to client
