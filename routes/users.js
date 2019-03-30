@@ -35,11 +35,12 @@ router.post("/", [pwValidator, valid(validate)], async (req, res) => {
    * @return object:
    */
 
-  // Make sure that user with given email is not already registered
+  // Make sure that user with given email isn't registered
   if (await User.getByEmail(req.body.email)) return res.status(400).send({error: "User already registered"});
 
+  const user = await User.create(req.body);
   // Return user object to a client
-  return res.status(201).send(_.pick(await User.create(req.body), config.get("users.returns")));
+  return res.status(201).send({token: user.generateAuthToken()});
 });
 
 router.put("/:id", [pwValidator, valid(validate)], auth, async (req, res) => {
@@ -49,6 +50,16 @@ router.put("/:id", [pwValidator, valid(validate)], auth, async (req, res) => {
    *
    * @return Object:
    */
+
+  if (!req.params.id) return res.status(404).send({error: "Cannot find this user"});
+
+  const { email } = req.body;
+
+  if (await User.getByEmail(email) && req.user.email !== email) {
+    return res.status(409).send({
+      error: "This email is taken by another account"
+    });
+  }
 
   const user = await User.update(req.params.id, req.body);
 
