@@ -21,3 +21,9 @@ jobs:
       # run tests!
       - run: NODE_ENV=test
       - run: yarn test
+
+workflows:
+  version: 2
+  test_carsalog:
+    jobs:
+      - build
