@@ -18,6 +18,8 @@ describe("/api/zips", () => {
     /**
      * Before all tests create: state, city, and user, generate auth token
      */
+    user = await utils.getUser("john.doe@zips.test");
+    if (user) user.remove();
     user = await utils.createUser("john.doe@zips.test", true);
     token = await user.generateAuthToken();
     state = await new State({name: "texas", abbreviation: "TX"}).save();
