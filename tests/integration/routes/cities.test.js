@@ -25,7 +25,7 @@ describe("/api/cities", () => {
      * Before each test create a user and generate a token
      */
 
-    user = await utils.createUser("john.doe@cities.test", true);
+    user = await utils.createUser(`john.doe.${Math.random()}@cities.test`, true);
     token = await user.generateAuthToken();
     done();
   });
@@ -61,7 +61,7 @@ describe("/api/cities", () => {
        *    add: cities to state,
        *    generate: url
        */
-      state = await State({name: "state1", abbreviation: "ST"}).save();
+      state = await State({name: "cities_state_test", abbreviation: "ST"}).save();
 
       city1 = await City({name: "city1_test", state: state._id}).save();
       city2 = await City({name: "city2_test", state: state._id}).save();
@@ -142,7 +142,7 @@ describe("/api/cities", () => {
        */
       name = "test_city_one";
 
-      state = await State({name: "state1", abbreviation: "ST"}).save();
+      state = await State({name: "cities_state_test", abbreviation: "ST"}).save();
       city = await City({name: name, state: state._id}).save();
 
       url = `/api/cities/${city._id}`;
@@ -211,7 +211,7 @@ describe("/api/cities", () => {
        * Before each test create state, and define name and url
        */
 
-      state = await State({name: "state1", abbreviation: "ST"}).save();
+      state = await State({name: "cities_state_test", abbreviation: "ST"}).save();
 
       name = "city";
       url = "/api/cities";
@@ -339,7 +339,7 @@ describe("/api/cities", () => {
        */
       name = "new city";
 
-      state = await State({name: "state1", abbreviation: "ST"}).save();
+      state = await State({name: "cities_state_test", abbreviation: "ST"}).save();
       city = await City({name: "model", state: state._id}).save();
 
       state.cities.push(city._id);
@@ -487,7 +487,7 @@ describe("/api/cities", () => {
 
       name = "city";
 
-      state = await State({name: "state1", abbreviation: "ST"}).save();
+      state = await State({name: "cities_state_test", abbreviation: "ST"}).save();
       city = await City({name: name, state: state._id}).save();
 
       state.cities.push(city._id);
@@ -502,8 +502,8 @@ describe("/api/cities", () => {
        * After each test remove city and state
        */
 
-      await city.remove();
-      await state.remove();
+      if (city) await city.remove();
+      if (state) await state.remove();
       done();
     });
 
