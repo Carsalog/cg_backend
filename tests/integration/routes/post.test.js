@@ -47,11 +47,11 @@ describe("/api/posts", () => {
     badUser = await utils.createUser("bad.user@post.test", false);
     _token = badUser.generateAuthToken();
     car = await utils.createCar("WBA5A5C51FD520000");
-    make = await new Make({name: "BMW"}).save();
-    model = await new Model({name: "5 series", make: make._id}).save();
-    state = await new State({name: "Texas", abbreviation: "TX"}).save();
-    city = await new City({name: "Austin", state: state._id}).save();
-    transmission = await new Transmission({type: "automatic"}).save();
+    make = await new Make({name: "test_post_make"}).save();
+    model = await new Model({name: "test_post_model", make: make._id}).save();
+    state = await new State({name: "test_post_state", abbreviation: "IL"}).save();
+    city = await new City({name: "test_post_city", state: state._id}).save();
+    transmission = await new Transmission({type: "test_pt"}).save();
 
     done();
   });
@@ -84,7 +84,7 @@ describe("/api/posts", () => {
        * Before each test create 3 posts, and define url
        */
 
-      url = "/api/posts?state=texas&city=austin";
+      url = `/api/posts?state=${state.name}&city=${city.name}`;
 
       post = await createPost("description", 20000, 60000);
       post2 = await createPost("description2", 20002, 60002);
@@ -107,7 +107,7 @@ describe("/api/posts", () => {
 
     it("should return status code 400 if city doesn't pass", async done => {
 
-      url = "/api/posts?state=texas";
+      url = `/api/posts?state=${state}`;
 
       const res = await prepare();
 
@@ -119,7 +119,7 @@ describe("/api/posts", () => {
 
     it("should return status code 400 if state doesn't pass", async done => {
 
-      url = "/api/posts?city=austin";
+      url = `/api/posts?city=${city}`;
 
       const res = await prepare();
 
@@ -131,7 +131,7 @@ describe("/api/posts", () => {
 
     it("should return status code 404 if state doesn't exist", async done => {
 
-      url = "/api/posts?state=state&city=austin";
+      url = `/api/posts?state=fake_state&city=${city.name}`;
 
       const res = await prepare();
 
@@ -143,7 +143,7 @@ describe("/api/posts", () => {
 
     it("should return status code 404 if city doesn't exist", async done => {
 
-      url = "/api/posts?state=texas&city=city";
+      url = `/api/posts?state=${state.name}&city=doNotExist`;
 
       const res = await prepare();
 
@@ -155,7 +155,7 @@ describe("/api/posts", () => {
 
     it("should return status code 404 if make passed but doesn't exist", async done => {
 
-      url = "/api/posts?state=texas&city=austin&make=make";
+      url = `/api/posts?state=${state.name}&city=${city.name}&make=wrongMake`;
 
       const res = await prepare();
 
@@ -167,7 +167,7 @@ describe("/api/posts", () => {
 
     it("should return status code 404 if model passed but doesn't exist", async done => {
 
-      url = "/api/posts?state=texas&city=austin&make=bmw&model=model";
+      url = `/api/posts?state=${state.name}&city=${city.name}&make=${make.name}&model=wrongModel`;
 
       const res = await prepare();
 
@@ -179,7 +179,7 @@ describe("/api/posts", () => {
 
     it("should return status code 404 if model passed without make", async done => {
 
-      url = "/api/posts?state=texas&city=austin&model=5 series";
+      url = `/api/posts?state=${state.name}&city=${city.name}&model=${model.name}`;
 
       const res = await prepare();
 
@@ -193,7 +193,7 @@ describe("/api/posts", () => {
 
       dataTypes.forEach(async item => {
 
-        url = `/api/posts?state=texas&city=austin&yearMin=${item}`;
+        url = `/api/posts?state=${state.name}&city=${city.name}&yearMin=${item}`;
 
         const res = await prepare();
 
@@ -208,7 +208,7 @@ describe("/api/posts", () => {
 
       dataTypes.forEach(async item => {
 
-        url = `/api/posts?state=texas&city=austin&yearMax=${item}`;
+        url = `/api/posts?state=${state.name}&city=${city.name}&yearMax=${item}`;
 
         const res = await prepare();
 
@@ -233,7 +233,7 @@ describe("/api/posts", () => {
 
       const amount = 2;
 
-      url += "&page=1&amount=" + amount;
+      url += `&page=1&amount=${amount}`;
 
       const res = await prepare();
 
@@ -245,7 +245,7 @@ describe("/api/posts", () => {
 
     it("should return status code 200 if passed a valid make", async done => {
 
-      url += "&make=bmw";
+      url += `&make=${make.name}`;
 
       const res = await prepare();
 
@@ -257,7 +257,7 @@ describe("/api/posts", () => {
 
     it("should return status code 200 if passed a valid make and model", async done => {
 
-      url += "&make=bmw&model=5 series";
+      url += `&make=${make.name}&model=${model.name}`;
 
       const res = await prepare();
 
@@ -269,7 +269,7 @@ describe("/api/posts", () => {
 
     it("should return status code 200 if passed a minYear > than car year", async done => {
 
-      url += "&make=bmw&model=5 series&yearMin=2016";
+      url += `&make=${make.name}&model=${model.name}&yearMin=2016`;
 
       const res = await prepare();
 
@@ -281,9 +281,10 @@ describe("/api/posts", () => {
 
     it("should return 200 and empty array if passed a maxYear < than car year", async done => {
 
-      url += "&make=bmw&model=5 series&yearMax=2014";
+      url += `&make=${make.name}&model=${model.name}&yearMax=2014`;
 
       const res = await prepare();
+
 
       expect(res.status).toBe(200);
       expect(res.body.length === 0).toBeTruthy();
@@ -293,7 +294,7 @@ describe("/api/posts", () => {
 
     it("should return 200 and cars if passed min and max year and cars between them", async done => {
 
-      url += "&make=bmw&model=5 series&yearMax=2016&yearMin=2014";
+      url += `&make=${make.name}&model=${model.name}&yearMax=2016&yearMin=2014`;
 
       const res = await prepare();
 
@@ -764,7 +765,7 @@ describe("/api/posts", () => {
 
   describe("PUT /:id", () => {
 
-    let data, state2, city2, transmission2;
+    let data, state2, city2, make2, model2, transmission2;
 
     // Prepare and return PUT request
     const prepare = () => request(server).put(url).set("x-auth-token", token).send(data);
@@ -776,6 +777,8 @@ describe("/api/posts", () => {
 
       state2 = await State({name: "California", abbreviation: "CA"}).save();
       city2 = await City({name: "San Francisco", state: state2._id}).save();
+      make2 = await Make({name: "make_post3.", models: []}).save();
+      model2 = await Model({name: "Post test model", make: make2._id}).save();
       transmission2 = await Transmission({type: "Manual"}).save();
       done();
     });
@@ -792,6 +795,10 @@ describe("/api/posts", () => {
       data = {
         state: state2._id,
         city: city2._id,
+        make: make2._id,
+        model: model2._id,
+        car: car._id,
+        year: car.year,
         transmission: transmission2._id,
         isActive: false,
         description: "A new description",
@@ -818,6 +825,8 @@ describe("/api/posts", () => {
 
       await state2.remove();
       await city2.remove();
+      await make2.remove();
+      await model2.remove();
       await transmission2.remove();
       done();
     });
