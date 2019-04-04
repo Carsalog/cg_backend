@@ -47,9 +47,9 @@ describe("/api/states", () => {
        * @type {*[]}
        */
       states = [
-        {name: "state1", abbreviation: "SO"},
-        {name: "state2", abbreviation: "ST"},
-        {name: "state3", abbreviation: "SR"}
+        {name: "states_test_name_one", abbreviation: "SO"},
+        {name: "states_test_name_two", abbreviation: "ST"},
+        {name: "states_test_name_three", abbreviation: "SR"}
       ];
       await State.collection.insertMany(states);
       done();
@@ -59,7 +59,14 @@ describe("/api/states", () => {
       /**
        * After each test remove the states
        */
-      await State.deleteMany({name: {$in: ["state1", "state2", "state3"]}});
+      await State.deleteMany({
+        name: {
+          $in: [
+            "states_test_name_one",
+            "states_test_name_two",
+            "states_test_name_three"]
+        }
+      });
       done();
     });
 
@@ -148,7 +155,7 @@ describe("/api/states", () => {
        * Before each test define name and abbreviation
        * @type {string}
        */
-      name = "state";
+      name = "states_test_name";
       abbreviation = "ST";
       done();
     });
@@ -289,7 +296,7 @@ describe("/api/states", () => {
       name = "newname";
       abbreviation = "NN";
 
-      state = await State({name: "state", abbreviation: "ST"}).save();
+      state = await State({name: "states_test_name", abbreviation: "ST"}).save();
 
       url = `/api/states/${state._id}`;
       done();
@@ -435,7 +442,7 @@ describe("/api/states", () => {
        *   generate: url
        * @type {string}
        */
-      name = "state";
+      name = "states_test_name";
       abbreviation = "ST";
 
       state = await State({name, abbreviation}).save();
