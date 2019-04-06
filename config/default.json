@@ -1,0 +1,167 @@
+{
+  "name": "Carsalog backend app",
+  "jwtPrivateKey": "",
+  "apiKey": "",
+  "googleKey": "",
+  "googleClientId": "",
+  "fbAppId": "",
+  "fbAppSecret": "",
+  "geo": "https://maps.googleapis.com/maps/api/geocode/json?",
+  "db": "mongodb://127.0.0.1:27017/carsalog",
+  "port": 5000,
+  "static": "public",
+  "bcrypt": {
+    "hashRounds": 10
+  },
+  "messages": {
+    "tableName": "Message",
+    "text": {
+      "min": 0,
+      "max": 3000
+    }
+  },
+  "transmission": {
+    "tableName": "Transmission",
+    "type": {
+      "min": 4,
+      "max": 10
+    }
+  },
+  "images": {
+    "tableName": "Image",
+    "size": {
+      "width": 1024,
+      "height": 576,
+      "mb": 10
+    },
+    "url": {
+      "min": 0,
+      "max": 1000
+    },
+    "multer": {
+      "dest": "images",
+      "temp": "uploads"
+    }
+  },
+  "cars": {
+    "tableName": "Car",
+    "vin": {
+      "length": 17
+    },
+    "year": {
+      "min": 1900
+    }
+  },
+  "zips": {
+    "tableName": "Zip",
+    "id": {
+      "min": 1000,
+      "max": 99999
+    },
+    "pop": {
+      "min": 0,
+      "max": 9999999
+    }
+  },
+  "posts": {
+    "tableName": "Post",
+    "description": {
+      "min": 5,
+      "max": 3000
+    },
+    "mileage": {
+      "min": 0,
+      "max": 999999
+    },
+    "price": {
+      "min": 500,
+      "max": 9999999
+    }
+  },
+  "users": {
+    "returns": ["_id", "firstName", "lastName", "email", "phone", "su"],
+    "tableName": "User",
+    "firstName": {
+      "min": 2,
+      "max": 50
+    },
+    "lastName": {
+      "min": 2,
+      "max": 50
+    },
+    "email": {
+      "min": 6,
+      "max": 256
+    },
+    "phone": {
+      "min": 6,
+      "max": 20
+    },
+    "password": {
+      "min": 10,
+      "max": 30,
+      "lowerCase": 1,
+      "upperCase": 1,
+      "numeric": 1,
+      "symbol": 1,
+      "requirementCount": 2
+    },
+    "hash": {
+      "min": 10,
+      "max": 1024
+    }
+  },
+  "states": {
+    "tableName": "State",
+    "name": {
+      "min": 4,
+      "max": 25
+    },
+    "abbreviation": {
+      "min": 2,
+      "max": 2,
+      "all": ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN",
+        "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH",
+        "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT",
+        "VT", "VA", "WA", "WV", "WI", "WY", "AS", "DC", "FM", "GU", "MH", "MP", "PW", "PR", "VI"]
+    }
+  },
+  "cities": {
+    "tableName": "City",
+    "name": {
+      "min": 3,
+      "max": 30
+    }
+  },
+  "makes": {
+    "tableName": "Make",
+    "name": {
+      "min": 2,
+      "max": 50
+    }
+  },
+  "models": {
+    "tableName": "Model",
+    "name": {
+      "min": 2,
+      "max": 50
+    }
+  },
+  "types": {
+    "tableName": "Type",
+    "name": {
+      "min": 2,
+      "max": 50
+    }
+  },
+  "tags": {
+    "tableName": "Tag",
+    "SearchAmount": 6,
+    "name": {
+      "min": 2,
+      "max": 20
+    }
+  },
+  "defaultPage": 1,
+  "itemsByPage": 9
+}
