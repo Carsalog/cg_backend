@@ -9,7 +9,7 @@
     "server:dev": "nodemon index.js"
   },
   "engines": {
-    "node": "10.15.0"
+    "node": "10.13.0"
   },
   "eslint.packageManager": "yarn",
   "keywords": [],
