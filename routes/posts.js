@@ -14,6 +14,8 @@ router.get("/", postsValidator, controller.get);
 
 router.get("/by/user/:id", idValidator, controller.getByUserId);
 
+router.get("/by/tags", controller.getByTags);
+
 router.get("/:id", idValidator, controller.getById);
 
 router.post("/", [auth, valid(validate), checkDataIDs], controller.post);

@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest --watchAll --verbose --coverage",
+    "test": "jest",
+    "test:dev": "jest --watchAll --verbose --coverage",
     "start": "node index.js",
     "server:dev": "nodemon index.js"
   },
