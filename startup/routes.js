@@ -1,4 +1,6 @@
 const express = require("express");
+const cors = require("cors");
+const passport = require("passport");
 const error = require("../middleware/error");
 const cars = require("../routes/cars");
 const images = require("../routes/images");
@@ -13,7 +15,7 @@ const states = require("../routes/states");
 const auth = require("../routes/auth");
 const users = require("../routes/users");
 const home = require("../routes/home");
-const cors = require("cors");
+const search = require("../routes/search");
 
 
 module.exports = function (app) {
@@ -26,8 +28,11 @@ module.exports = function (app) {
   app.use(express.json({limit: '50mb'}));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
   app.use(express.static('public'));
+  app.use(require('cookie-parser')());
   app.use(cors());
   app.disable('x-powered-by');
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   // Routs
   app.use('/api/cars', cars);
@@ -42,6 +47,7 @@ module.exports = function (app) {
   app.use('/api/states', states);
   app.use('/api/auth', auth);
   app.use('/api/users', users);
+  app.use('/api/search', search);
   app.use('/', home);
   app.use(error);
 };
