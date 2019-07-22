@@ -1,0 +1,8 @@
+{
+  "jwtPrivateKey": "Carsalog_jwt",
+  "apiKey": "key",
+  "googleKey": "google_key",
+  "googleClientId": "google_client_id",
+  "fbAppId": "fb_app_id",
+  "fbAppSecret": "fb_app_secret"
+}

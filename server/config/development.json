@@ -1,0 +1,7 @@
+{
+  "name": "Carsalog app - development",
+  "mail": {
+    "host": "dev-mail-server"
+  },
+  "jwtPrivateKey": "12345"
+}
