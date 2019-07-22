@@ -1,0 +1,9 @@
+.idea/
+node_modules/
+coverage/
+tmp.js
+yarn-error.log
+package-lock.json
+yarn.lock
+logfile.log
+handleException.log

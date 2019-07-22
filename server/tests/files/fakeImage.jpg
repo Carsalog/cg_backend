@@ -1,0 +1,12 @@
+router.post("/", [auth, img], async (req, res) => {
+  /**
+   * Add a new image
+   * @return Object:
+   */
+  const images = await req.images;
+
+  console.log(images);
+
+  // Send response to a client
+  return res.status(201).send({info: "image is loaded", image: req.file});
+});
